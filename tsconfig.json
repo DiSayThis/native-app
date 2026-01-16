@@ -1,6 +1,14 @@
 {
-  "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "strict": true
-  }
+	"extends": "expo/tsconfig.base",
+	"compilerOptions": {
+		"strict": true,
+		"paths": {
+			"@/app/*": ["./app/*"],
+			"@/screens/*": ["./screens/*"],
+			"@/widgets/*": ["./widgets/*"],
+			"@/features/*": ["./features/*"],
+			"@/entities/*": ["./entities/*"],
+			"@/shared/*": ["./shared/*"]
+		}
+	}
 }
