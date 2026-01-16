@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { StatusBar } from 'expo-status-bar';
+import { Camera } from 'lucide-react-native';
 
+import Up from '@/shared/assets/icons/up.svg';
 import { Input } from '@/shared/ui/Input';
-
-import Up from './assets/icons/up.svg';
 
 export default function App() {
 	return (
@@ -14,6 +14,7 @@ export default function App() {
 			<Input />
 			<StatusBar style="auto" />
 			<Up width={100} height={100} />
+			<Camera color="red" size={48} />
 		</View>
 	);
 }
