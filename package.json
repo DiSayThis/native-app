@@ -1,30 +1,50 @@
 {
-  "name": "native-tutorial-app",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
-  },
-  "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.2.0",
-    "expo": "~54.0.31",
-    "expo-status-bar": "~3.0.9",
-    "lucide-react-native": "^0.562.0",
-    "react": "19.1.0",
-    "react-native": "0.81.5",
-    "react-native-svg": "15.12.1",
-    "zustand": "^5.0.10"
-  },
-  "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
-    "@types/react": "~19.1.0",
-    "babel-plugin-module-resolver": "^5.0.2",
-    "babel-preset-expo": "^54.0.9",
-    "react-native-svg-transformer": "^1.5.2",
-    "typescript": "~5.9.2"
-  },
-  "private": true
+	"name": "native-tutorial-app",
+	"version": "1.0.0",
+	"main": "expo-router/entry",
+	"scripts": {
+		"start": "expo start",
+		"android": "expo start --android",
+		"ios": "expo start --ios",
+		"web": "expo start --web",
+		"lint": "expo lint",
+		"lint:format": "prettier -c .",
+		"lint:format-fix": "prettier --write ."
+	},
+	"dependencies": {
+		"@react-native-async-storage/async-storage": "^2.2.0",
+		"expo": "~54.0.31",
+		"expo-constants": "~18.0.13",
+		"expo-linking": "~8.0.11",
+		"expo-router": "~6.0.21",
+		"expo-status-bar": "~3.0.9",
+		"lucide-react-native": "^0.562.0",
+		"react": "19.1.0",
+		"react-native": "0.81.5",
+		"react-native-reanimated": "^4.2.1",
+		"react-native-safe-area-context": "~5.6.0",
+		"react-native-screens": "~4.16.0",
+		"react-native-svg": "15.12.1",
+		"zustand": "^5.0.10"
+	},
+	"devDependencies": {
+		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
+		"@types/react": "~19.1.0",
+		"@typescript-eslint/eslint-plugin": "^8.53.0",
+		"@typescript-eslint/parser": "^8.53.0",
+		"babel-plugin-module-resolver": "^5.0.2",
+		"babel-preset-expo": "^54.0.9",
+		"eslint": "^9.39.2",
+		"eslint-config-expo": "~10.0.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.5",
+		"eslint-plugin-react": "^7.37.5",
+		"eslint-plugin-react-hooks": "^7.0.1",
+		"eslint-plugin-react-native": "^5.0.0",
+		"eslint-plugin-unused-imports": "^4.3.0",
+		"prettier": "^3.8.0",
+		"react-native-svg-transformer": "^1.5.2",
+		"typescript": "~5.9.2"
+	},
+	"private": true
 }

@@ -25,6 +25,8 @@
 		},
 		"web": {
 			"favicon": "./shared/assets/favicon.png"
-		}
+		},
+		"plugins": ["expo-router"],
+		"scheme": "native-tutorial-app-scheme"
 	}
 }
