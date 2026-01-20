@@ -64,5 +64,6 @@ const styles = StyleSheet.create({
 		fontSize: lightTheme.typography.fontSizeButtons,
 		fontWeight: 700,
 		color: lightTheme.colors.accentTextColor,
+		fontFamily: lightTheme.typography.fontFamilyHeadings,
 	},
 });

@@ -35,11 +35,11 @@ export type AppTheme = {
 
 	typography: {
 		// В RN fontSize — число (px), не rem.
+		fontFamily: string;
+		fontFamilyHeadings: string;
 		fontSizeBase: number; // аналог 0.875rem при base 16 => 14
 		fontSizeButtons: number;
 		headingsLetterSpacing: number; // 1px
-		fontButtons: string; // mulish
-		fontHeadings: string; // Nunito Sans
 		lineHeightBase: number; // "normal" в RN нет, задаем руками
 	};
 	radius: number;
@@ -93,11 +93,11 @@ export const lightTheme: AppTheme = {
 		accentHoverTextColor: '#095851',
 	},
 	typography: {
+		fontFamily: 'Mulish',
+		fontFamilyHeadings: 'NunitoSans',
 		fontSizeBase: FontsSize.f14, // 0.875rem * 16px
 		fontSizeButtons: FontsSize.f16,
 		headingsLetterSpacing: 1,
-		fontButtons: 'Mulish',
-		fontHeadings: 'NunitoSans',
 		lineHeightBase: 18, // под 14px обычно 18–20 комфортно
 	},
 	radius: 15,
