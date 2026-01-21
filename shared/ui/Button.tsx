@@ -6,20 +6,24 @@ import {
 	Pressable,
 	type PressableProps,
 	StyleSheet,
-	Text,
 } from 'react-native';
 
 import { lightTheme } from '../styles/tokens';
 
 interface IButtonProps extends PressableProps {
 	title?: string;
+	children?: React.ReactNode;
 }
 
-export default function Button({ title, ...rest }: IButtonProps) {
+export default function Button({ title, children, ...rest }: IButtonProps) {
 	const animatedValue = new Animated.Value(100);
+	const backgroundColorInterpolation = animatedValue.interpolate({
+		inputRange: [0, 100],
+		outputRange: [lightTheme.colors.accentHoverColor, lightTheme.colors.accentColor],
+	});
 	const colorInterpolation = animatedValue.interpolate({
 		inputRange: [0, 100],
-		outputRange: [lightTheme.colors.accentHoverColor, lightTheme.colors.accentHoverColor],
+		outputRange: [lightTheme.colors.accentHoverTextColor, lightTheme.colors.accentTextColor],
 	});
 
 	const fadeIn = (e: GestureResponderEvent) => {
@@ -44,10 +48,12 @@ export default function Button({ title, ...rest }: IButtonProps) {
 			<Animated.View
 				style={{
 					...styles.button,
-					backgroundColor: colorInterpolation,
+					backgroundColor: backgroundColorInterpolation,
 				}}
 			>
-				<Text style={styles.text}>{title ?? 'Отправить'}</Text>
+				<Animated.Text style={{ ...styles.text, color: colorInterpolation }}>
+					{children ?? title ?? 'Отправить'}
+				</Animated.Text>
 			</Animated.View>
 		</Pressable>
 	);
@@ -63,7 +69,7 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: lightTheme.typography.fontSizeButtons,
 		fontWeight: 700,
-		color: lightTheme.colors.accentTextColor,
 		fontFamily: lightTheme.typography.fontFamilyHeadings,
+		paddingHorizontal: lightTheme.spacing.x2,
 	},
 });

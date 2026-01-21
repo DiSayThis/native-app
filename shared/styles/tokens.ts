@@ -38,6 +38,7 @@ export type AppTheme = {
 		fontFamily: string;
 		fontFamilyHeadings: string;
 		fontSizeBase: number; // аналог 0.875rem при base 16 => 14
+		fontSizeHeading: number;
 		fontSizeButtons: number;
 		headingsLetterSpacing: number; // 1px
 		lineHeightBase: number; // "normal" в RN нет, задаем руками
@@ -95,8 +96,9 @@ export const lightTheme: AppTheme = {
 	typography: {
 		fontFamily: 'Mulish',
 		fontFamilyHeadings: 'NunitoSans',
-		fontSizeBase: FontsSize.f14, // 0.875rem * 16px
+		fontSizeBase: FontsSize.f16, // 0.875rem * 16px
 		fontSizeButtons: FontsSize.f16,
+		fontSizeHeading: FontsSize.f24,
 		headingsLetterSpacing: 1,
 		lineHeightBase: 18, // под 14px обычно 18–20 комфортно
 	},
