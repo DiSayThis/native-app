@@ -1,32 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-
-import { Link } from 'expo-router';
-import { useAtom } from 'jotai';
-
-import { userAtom } from '@/entities/user/model/user.store';
-
-import { lightTheme } from '@/shared/styles/tokens';
-import Button from '@/shared/ui/Button';
+import MainScreen from '@/screens/MainScreen';
 
 export default function MainPage() {
-	const [profile, setUser] = useAtom(userAtom);
-
-	return (
-		<View style={styles.container}>
-			<Text>User {profile.user?.id}</Text>
-			<Button />
-			<Link href="/partner-offer/123">Go to offer</Link>
-			<Link href="/login">Go to login</Link>
-			<Link href="/registration">Go to registration</Link>
-			<Link href="/profile">Go to profile</Link>
-			<Link href="/unmatched">Go to unmatched</Link>
-		</View>
-	);
+	return <MainScreen />;
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: lightTheme.spacing.x2,
-	},
-});

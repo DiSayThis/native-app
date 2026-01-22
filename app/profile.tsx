@@ -1,20 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-
-import { lightTheme } from '@/shared/styles/tokens';
+import ProfileScreen from '@/screens/ProfileScreen';
 
 export default function ProfilePage() {
-	return (
-		<View style={styles.container}>
-			<Text style={{ fontFamily: lightTheme.typography.fontFamilyHeadings }}>
-				Open up App.tsx to start working on your app!
-			</Text>
-		</View>
-	);
+	return <ProfileScreen />;
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: lightTheme.spacing.x2,
-	},
-});
