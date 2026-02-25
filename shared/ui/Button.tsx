@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import {
 	Animated,
@@ -10,20 +10,41 @@ import {
 
 import { lightTheme } from '../styles/tokens';
 
+type ButtonVariant = 'primary' | 'secondary';
+
 interface IButtonProps extends PressableProps {
 	title?: string;
 	children?: React.ReactNode;
+	variant?: ButtonVariant;
 }
 
-export default function Button({ title, children, ...rest }: IButtonProps) {
-	const animatedValue = new Animated.Value(100);
+const variantColors = {
+	primary: {
+		background: lightTheme.colors.accentColor,
+		backgroundHover: lightTheme.colors.accentHoverColor,
+		text: lightTheme.colors.accentTextColor,
+		textHover: lightTheme.colors.accentHoverTextColor,
+		borderColor: 'transparent',
+	},
+	secondary: {
+		background: lightTheme.colors.bgWhite,
+		backgroundHover: lightTheme.colors.hoverBgSecondary,
+		text: lightTheme.colors.textColor,
+		textHover: lightTheme.colors.textColor,
+		borderColor: lightTheme.colors.borderColor,
+	},
+} as const;
+
+export default function Button({ title, children, variant = 'primary', ...rest }: IButtonProps) {
+	const animatedValue = useRef(new Animated.Value(100)).current;
+	const colors = variantColors[variant];
 	const backgroundColorInterpolation = animatedValue.interpolate({
 		inputRange: [0, 100],
-		outputRange: [lightTheme.colors.accentHoverColor, lightTheme.colors.accentColor],
+		outputRange: [colors.backgroundHover, colors.background],
 	});
 	const colorInterpolation = animatedValue.interpolate({
 		inputRange: [0, 100],
-		outputRange: [lightTheme.colors.accentHoverTextColor, lightTheme.colors.accentTextColor],
+		outputRange: [colors.textHover, colors.text],
 	});
 
 	const fadeIn = (e: GestureResponderEvent) => {
@@ -48,6 +69,7 @@ export default function Button({ title, children, ...rest }: IButtonProps) {
 			<Animated.View
 				style={{
 					...styles.button,
+					borderColor: colors.borderColor,
 					backgroundColor: backgroundColorInterpolation,
 				}}
 			>
@@ -65,6 +87,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: lightTheme.radius,
 		height: 58,
+		borderWidth: 1,
 	},
 	text: {
 		fontSize: lightTheme.typography.fontSizeButtons,

@@ -56,6 +56,7 @@ export type AppTheme = {
 
 const BaseColor = {
 	bgWhite: '#f8f8f8',
+	white: '#fff',
 	textColor: '#032c28',
 	bgGreen: '#8fe248',
 	bgBrown: '#f0e9e2',

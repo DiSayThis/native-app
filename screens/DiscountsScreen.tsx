@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { lightTheme } from '@/shared/styles/tokens';
 
-export default function MainScreen() {
+export default function DiscountsScreen() {
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Кошелек</Text>
+			<Text style={styles.title}>Скидки</Text>
 		</View>
 	);
 }

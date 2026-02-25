@@ -3,7 +3,15 @@ export interface ILoginPayload {
 	password: string;
 }
 
-export interface IAuthResponse {
+interface IAuthUser {
 	id: string;
 	role: string;
+}
+
+export interface IAuthResponse {
+	id?: string;
+	role?: string;
+	user?: IAuthUser;
+	accessToken?: string;
+	token?: string;
 }

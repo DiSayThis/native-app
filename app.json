@@ -1,7 +1,7 @@
 {
 	"expo": {
-		"name": "native-tutorial-app",
-		"slug": "native-tutorial-app",
+		"name": "studmart-native-app",
+		"slug": "studmart-native-app",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./shared/assets/icon.png",
@@ -110,6 +110,6 @@
 				}
 			]
 		],
-		"scheme": "native-tutorial-app-scheme"
+		"scheme": "studmart-native-app-scheme"
 	}
 }
