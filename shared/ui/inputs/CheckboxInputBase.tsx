@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 		borderColor: lightTheme.colors.borderColor,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#fff',
+		backgroundColor: lightTheme.colors.clearWhite,
 	},
 	checkboxChecked: {
 		backgroundColor: lightTheme.colors.accentColor,

@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: lightTheme.colors.borderColor,
 		borderRadius: 12,
-		backgroundColor: '#fff',
+		backgroundColor: lightTheme.colors.clearWhite,
 		paddingHorizontal: 14,
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
 	},
 	modalCard: {
 		maxHeight: '80%',
-		backgroundColor: '#fff',
+		backgroundColor: lightTheme.colors.clearWhite,
 		borderTopLeftRadius: 16,
 		borderTopRightRadius: 16,
 		padding: 16,

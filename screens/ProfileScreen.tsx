@@ -26,5 +26,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: lightTheme.spacing.x2,
+		backgroundColor: lightTheme.colors.background,
 	},
 });

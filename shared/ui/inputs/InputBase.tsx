@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 		flexDirection: 'row',
 		alignItems: 'center',
-		backgroundColor: '#fff',
+		backgroundColor: lightTheme.colors.clearWhite,
 	},
 	errorBorder: {
 		borderColor: lightTheme.colors.error,

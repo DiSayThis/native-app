@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { StyleSheet, View } from 'react-native';
+
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,7 +20,7 @@ export default function RootLayout() {
 	}, [fontsLoaded]);
 
 	if (!fontsLoaded) {
-		return null; // или SplashScreen
+		return <View style={styles.fallback} />;
 	}
 
 	return (
@@ -29,6 +31,13 @@ export default function RootLayout() {
 		</QueryProvider>
 	);
 }
+
+const styles = StyleSheet.create({
+	fallback: {
+		flex: 1,
+		backgroundColor: lightTheme.colors.background,
+	},
+});
 
 function RootNavigator() {
 	const insets = useSafeAreaInsets();

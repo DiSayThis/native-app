@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: lightTheme.colors.borderColor,
 		borderRadius: 12,
-		backgroundColor: '#fff',
+		backgroundColor: lightTheme.colors.clearWhite,
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(0,0,0,0.3)',
 	},
 	modalCard: {
-		backgroundColor: '#fff',
+		backgroundColor: lightTheme.colors.clearWhite,
 		paddingBottom: 20,
 	},
 	modalHeader: {

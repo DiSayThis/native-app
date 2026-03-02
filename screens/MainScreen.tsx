@@ -12,8 +12,9 @@ export default function MainScreen() {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
 		padding: lightTheme.spacing.x2,
+
+		backgroundColor: lightTheme.colors.background,
 	},
 	title: {
 		fontFamily: lightTheme.typography.fontFamilyHeadings,

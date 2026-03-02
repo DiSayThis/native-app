@@ -24,6 +24,7 @@ export default function TabsLayout() {
 		<Tabs
 			screenOptions={{
 				headerShown: false,
+				sceneStyle: { backgroundColor: lightTheme.colors.background },
 				tabBarActiveTintColor: lightTheme.colors.textColor,
 				tabBarInactiveTintColor: lightTheme.colors.gray,
 				tabBarHideOnKeyboard: true,
@@ -36,7 +37,7 @@ export default function TabsLayout() {
 					paddingBottom: lightTheme.spacing.x2,
 					marginHorizontal: TAB_SIDE_OFFSET,
 					paddingTop: 6,
-					backgroundColor: lightTheme.colors.bgWhite,
+					backgroundColor: lightTheme.colors.background,
 					elevation: 8,
 					shadowColor: '#000',
 					shadowOpacity: 0.08,
