@@ -30,12 +30,10 @@ export const loginAtom = atom(
 	async (get, set, { email, password }: ILoginPayload) => {
 		set(authAtom, { ...INITIAL_STATE, isLoading: true });
 		try {
-			console.log(email, password);
 			const response = await authQueries.login({ email, password });
 			const userId = response.id ?? response.user?.id ?? null;
 			const userRole = response.role ?? response.user?.role ?? null;
 			const accessToken = response.accessToken ?? response.token ?? null;
-			console.log(response);
 
 			if (!userId || !userRole) {
 				throw new Error('Некорректный ответ авторизации');

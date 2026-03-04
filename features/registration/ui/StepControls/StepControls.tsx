@@ -64,7 +64,7 @@ export default function StepControls({
 
 const styles = StyleSheet.create({
 	wrapper: {
-		flexDirection: 'row',
+		flexDirection: 'column-reverse',
 		gap: 10,
 	},
 	buttonWrap: {

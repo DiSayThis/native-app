@@ -33,7 +33,7 @@ export default function CheckboxInputBase({
 				accessibilityState={{ checked, disabled }}
 			>
 				<View style={[styles.checkbox, checked ? styles.checkboxChecked : null]}>
-					{checked ? <Check size={14} color={lightTheme.colors.textColor} /> : null}
+					{checked ? <Check size={24} color={lightTheme.colors.textColor} /> : null}
 				</View>
 				<Text style={styles.content}>{children}</Text>
 			</Pressable>
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
 		opacity: 0.6,
 	},
 	checkbox: {
-		width: 20,
-		height: 20,
+		width: 30,
+		height: 30,
 		borderRadius: 4,
 		borderWidth: 1,
 		borderColor: lightTheme.colors.borderColor,

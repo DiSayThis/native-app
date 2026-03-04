@@ -79,7 +79,7 @@ export default function RegistrationForm() {
 		return () => clearTimeout(timer);
 	}, [successRegistered]);
 
-	const stepFields: Record<number, Array<keyof IRegistrationFormType>> = {
+	const stepFields: Record<number, (keyof IRegistrationFormType)[]> = {
 		1: ['email', 'password', 'confirmPassword', 'promocode'],
 		2: ['firstName', 'lastName', 'sex', 'birthDate'],
 		3: ['specialisation', 'universityId', 'courseId', 'consent'],
@@ -209,13 +209,9 @@ const styles = StyleSheet.create({
 	},
 	form: {
 		width: '100%',
-		maxWidth: 480,
 		alignSelf: 'center',
-		marginTop: 24,
-		padding: 20,
-		borderRadius: 24,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
+		padding: lightTheme.spacing.x2,
+		paddingTop: 0,
 		gap: 14,
 		backgroundColor: lightTheme.colors.bgWhite,
 	},

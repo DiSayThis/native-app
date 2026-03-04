@@ -28,6 +28,7 @@ export default function TabsLayout() {
 				tabBarActiveTintColor: lightTheme.colors.textColor,
 				tabBarInactiveTintColor: lightTheme.colors.gray,
 				tabBarHideOnKeyboard: true,
+
 				tabBarStyle: {
 					position: 'absolute',
 					bottom: insets.bottom + TAB_BOTTOM_OFFSET,

@@ -1,4 +1,5 @@
 import { promocodeApi } from '@/shared/api/api-servises';
+import { FILE_API, PROMOCODE_API } from '@/shared/api/urls';
 
 import type { ICategoryDTO, IPartnerCard, IPartnerDTO } from '../model/discounts.dto';
 
@@ -7,10 +8,14 @@ export async function getCategoriesQuery(): Promise<ICategoryDTO[]> {
 		.get<ICategoryDTO[]>('/Categories')
 		.then((data) =>
 			Array.isArray(data)
-				? data.map((category) => ({
-						...category,
-						IconUrl: category.IconUrl ?? `/api/files/Categories/${category.id}`,
-					}))
+				? data.map((category) => {
+						return {
+							...category,
+							IconUrl: resolveCategoryIconUrl(
+								category.IconUrl ?? `${FILE_API}/Categories/${category.id}`,
+							),
+						};
+					})
 				: [],
 		)
 		.catch(() => []);
@@ -32,4 +37,13 @@ function mapPartnerToCard(item: IPartnerDTO): IPartnerCard {
 		categoryId: item.category?.id ?? 0,
 		isFixed: Boolean(item.isFixed),
 	};
+}
+
+function resolveCategoryIconUrl(iconPath: string): string {
+	if (iconPath.startsWith('http://') || iconPath.startsWith('https://')) {
+		return iconPath;
+	}
+
+	const normalizedPath = iconPath.startsWith('/') ? iconPath : `/${iconPath}`;
+	return `${PROMOCODE_API}${normalizedPath}`;
 }
