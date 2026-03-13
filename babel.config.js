@@ -4,13 +4,13 @@ module.exports = function (api) {
 	return {
 		presets: ['babel-preset-expo'],
 		plugins: [
-			'expo-router/babel',
 			[
 				'module-resolver',
 				{
 					alias: {
 						'@/app': './app',
 						'@/screens': './screens',
+						'@/pages': './pages',
 						'@/widgets': './widgets',
 						'@/features': './features',
 						'@/entities': './entities',

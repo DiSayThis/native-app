@@ -20,6 +20,7 @@ module.exports = {
 
 		'^@/app/(.*)$',
 		'^@/screens/(.*)$',
+		'^@/pages/(.*)$',
 		'^@/widgets/(.*)$',
 		'^@/features/(.*)$',
 		'^@/entities/(.*)$',

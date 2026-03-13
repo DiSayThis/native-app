@@ -1,4 +1,4 @@
-import { authApi } from '@/shared/api/api-servises';
+import { authApi } from '@/shared/api/api-services';
 
 import type { IAuthResponse, ILoginPayload } from '../model/auth.dto';
 

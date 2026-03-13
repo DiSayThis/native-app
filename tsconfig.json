@@ -4,6 +4,7 @@
 		"strict": true,
 		"paths": {
 			"@/app/*": ["./app/*"],
+			"@/pages/*": ["./pages/*"],
 			"@/screens/*": ["./screens/*"],
 			"@/widgets/*": ["./widgets/*"],
 			"@/features/*": ["./features/*"],

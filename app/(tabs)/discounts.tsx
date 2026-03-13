@@ -1,5 +1,5 @@
-import DiscountsScreen from '@/screens/public-pages/DiscountsScreen';
+import DiscountsPageView from '@/pages/public-pages/DiscountsPage';
 
 export default function DiscountsPage() {
-	return <DiscountsScreen />;
+	return <DiscountsPageView />;
 }

@@ -1,5 +1,5 @@
-import UnmatchedScreen from '@/screens/UnmatchedScreen';
+import UnmatchedPageView from '@/pages/UnmatchedPage';
 
 export default function UnmatchedPage() {
-	return <UnmatchedScreen />;
+	return <UnmatchedPageView />;
 }

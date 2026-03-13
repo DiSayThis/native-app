@@ -1,7 +1,7 @@
 import { Redirect } from 'expo-router';
 import { useAtomValue } from 'jotai';
 
-import LoginScreen from '@/screens/public-pages/LoginScreen';
+import LoginPageView from '@/pages/public-pages/LoginPage';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 
@@ -11,5 +11,5 @@ export default function LoginPage() {
 		return <Redirect href="/discounts" />;
 	}
 
-	return <LoginScreen />;
+	return <LoginPageView />;
 }

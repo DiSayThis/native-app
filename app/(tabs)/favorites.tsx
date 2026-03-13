@@ -1,5 +1,5 @@
-import FavoritesScreen from '@/screens/public-pages/FavoritesScreen';
+import FavoritesPageView from '@/pages/public-pages/FavoritesPage';
 
 export default function FavoritesPage() {
-	return <FavoritesScreen />;
+	return <FavoritesPageView />;
 }

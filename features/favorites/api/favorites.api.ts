@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-import type { IPartnerCard, IPartnerDTO } from '@/features/discounts/model/discounts.dto';
+import type { IPartnerCard, IPartnerDTO } from '@/entities/partner/model/partner.dto';
 
-import { promocodeApi } from '@/shared/api/api-servises';
+import { promocodeApi } from '@/shared/api/api-services';
 import { PROMOCODE_API } from '@/shared/api/urls';
 import { axiosCore } from '@/shared/lib/axios';
 

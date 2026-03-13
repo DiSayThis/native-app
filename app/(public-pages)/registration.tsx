@@ -1,7 +1,7 @@
 import { Redirect } from 'expo-router';
 import { useAtomValue } from 'jotai';
 
-import RegistrationScreen from '@/screens/public-pages/RegistrationScreen';
+import RegistrationPageView from '@/pages/public-pages/RegistrationPage';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 
@@ -12,5 +12,5 @@ export default function RegistrationPage() {
 		return <Redirect href="/" />;
 	}
 
-	return <RegistrationScreen />;
+	return <RegistrationPageView />;
 }

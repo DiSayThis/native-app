@@ -1,5 +1,5 @@
-import MainScreen from '@/screens/MainScreen';
+import MainPageView from '@/pages/MainPage';
 
 export default function WalletPage() {
-	return <MainScreen />;
+	return <MainPageView />;
 }
