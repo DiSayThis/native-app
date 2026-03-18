@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import {
 	ActivityIndicator,
 	FlatList,
-	Modal,
 	Pressable,
 	StyleSheet,
 	Text,
@@ -14,6 +13,7 @@ import {
 import { ChevronDown, Search, X } from 'lucide-react-native';
 
 import { lightTheme } from '@/shared/styles/tokens';
+import ModalSlide from '@/shared/ui/ModalSlide';
 
 import { FormFieldShell } from './FormFieldShell';
 import type { SelectOption } from './types';
@@ -64,6 +64,11 @@ export function SelectAutocomplete({
 		return options.filter((option) => option.label.toLowerCase().includes(text));
 	}, [options, query, searchable]);
 
+	const handleClose = () => {
+		setIsOpen(false);
+		onBlur?.();
+	};
+
 	return (
 		<FormFieldShell label={label} errorText={errorText}>
 			<Pressable
@@ -100,63 +105,53 @@ export function SelectAutocomplete({
 				</View>
 			</Pressable>
 
-			<Modal visible={isOpen} transparent animationType="slide">
-				<View style={styles.modalBackdrop}>
-					<View style={styles.modalCard}>
-						<View style={styles.header}>
-							<Text style={styles.headerTitle}>{label ?? 'Выбор'}</Text>
+			<ModalSlide visible={isOpen} onClose={handleClose} contentStyle={styles.modalCard}>
+				<View style={styles.header}>
+					<Text style={styles.headerTitle}>{label ?? 'Выбор'}</Text>
+					<Pressable onPress={handleClose}>
+						<X size={18} color={lightTheme.colors.labelColor} />
+					</Pressable>
+				</View>
+
+				{searchable ? (
+					<View style={styles.searchWrapper}>
+						<Search size={16} color={lightTheme.colors.labelColor} />
+						<TextInput
+							style={styles.searchInput}
+							placeholder="Поиск"
+							placeholderTextColor={lightTheme.colors.labelColor}
+							value={query}
+							onChangeText={setQuery}
+						/>
+					</View>
+				) : null}
+
+				{isLoading ? (
+					<View style={styles.stateBlock}>
+						<ActivityIndicator color={lightTheme.colors.accentColor} />
+					</View>
+				) : filteredOptions.length === 0 ? (
+					<View style={styles.stateBlock}>
+						<Text style={styles.stateText}>{noOptionsText}</Text>
+					</View>
+				) : (
+					<FlatList
+						data={filteredOptions}
+						keyExtractor={(item) => String(item.value)}
+						renderItem={({ item }) => (
 							<Pressable
+								style={styles.option}
 								onPress={() => {
-									setIsOpen(false);
-									onBlur?.();
+									onChange(item.value);
+									handleClose();
 								}}
 							>
-								<X size={18} color={lightTheme.colors.labelColor} />
+								<Text style={styles.optionText}>{item.label}</Text>
 							</Pressable>
-						</View>
-
-						{searchable ? (
-							<View style={styles.searchWrapper}>
-								<Search size={16} color={lightTheme.colors.labelColor} />
-								<TextInput
-									style={styles.searchInput}
-									placeholder="Поиск"
-									placeholderTextColor={lightTheme.colors.labelColor}
-									value={query}
-									onChangeText={setQuery}
-								/>
-							</View>
-						) : null}
-
-						{isLoading ? (
-							<View style={styles.stateBlock}>
-								<ActivityIndicator color={lightTheme.colors.accentColor} />
-							</View>
-						) : filteredOptions.length === 0 ? (
-							<View style={styles.stateBlock}>
-								<Text style={styles.stateText}>{noOptionsText}</Text>
-							</View>
-						) : (
-							<FlatList
-								data={filteredOptions}
-								keyExtractor={(item) => String(item.value)}
-								renderItem={({ item }) => (
-									<Pressable
-										style={styles.option}
-										onPress={() => {
-											onChange(item.value);
-											setIsOpen(false);
-											onBlur?.();
-										}}
-									>
-										<Text style={styles.optionText}>{item.label}</Text>
-									</Pressable>
-								)}
-							/>
 						)}
-					</View>
-				</View>
-			</Modal>
+					/>
+				)}
+			</ModalSlide>
 		</FormFieldShell>
 	);
 }
@@ -202,17 +197,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-	modalBackdrop: {
-		flex: 1,
-		justifyContent: 'flex-end',
-		backgroundColor: 'rgba(0,0,0,0.3)',
-	},
 	modalCard: {
 		maxHeight: '80%',
-		backgroundColor: lightTheme.colors.clearWhite,
-		borderTopLeftRadius: 16,
-		borderTopRightRadius: 16,
-		padding: 16,
 		gap: 12,
 	},
 	header: {

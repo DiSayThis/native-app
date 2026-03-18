@@ -4,6 +4,12 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 import { Star } from 'lucide-react-native';
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+	withTiming,
+} from 'react-native-reanimated';
 
 import { usePartnerFavoriteToggle } from '@/features/favorites/hook/usePartnerFavoriteToggle';
 
@@ -21,9 +27,30 @@ type PartnerCardProps = {
 export const PartnerCard = memo(function PartnerCard({ item }: PartnerCardProps) {
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const [hasImageError, setHasImageError] = useState(false);
+	const starScale = useSharedValue(1);
+	const starRotate = useSharedValue(0);
 	const { isFavorite, canToggleFavorite, isToggling, toggleFavorite } = usePartnerFavoriteToggle({
 		partnerId: item.id,
 	});
+
+	const animateStarPress = () => {
+		starScale.value = 1;
+		starRotate.value = 0;
+
+		starScale.value = withTiming(1.25, { duration: 110 }, () => {
+			starScale.value = withSpring(1, {
+				stiffness: 300,
+			});
+		});
+
+		starRotate.value = withTiming(18, { duration: 110 }, () => {
+			starRotate.value = withTiming(0, { duration: 160 });
+		});
+	};
+
+	const animatedStarStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: starScale.value }, { rotate: `${starRotate.value}deg` }],
+	}));
 
 	return (
 		<Pressable
@@ -36,14 +63,17 @@ export const PartnerCard = memo(function PartnerCard({ item }: PartnerCardProps)
 					disabled={isToggling}
 					onPress={(event) => {
 						event.stopPropagation();
+						animateStarPress();
 						void toggleFavorite();
 					}}
 				>
-					<Star
-						size={18}
-						color={isFavorite ? '#EAB308' : lightTheme.colors.clearWhite}
-						fill={isFavorite ? '#EAB308' : 'transparent'}
-					/>
+					<Animated.View style={animatedStarStyle}>
+						<Star
+							size={18}
+							color={isFavorite ? '#EAB308' : lightTheme.colors.clearWhite}
+							fill={isFavorite ? '#EAB308' : 'transparent'}
+						/>
+					</Animated.View>
 				</Pressable>
 			) : null}
 			<View style={styles.imageContainer}>

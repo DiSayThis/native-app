@@ -13,15 +13,18 @@ import {
 
 import { router } from 'expo-router';
 import { useAtomValue } from 'jotai';
-import { ArrowLeft, ExternalLink } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 
 import { usePartnerOfferData } from '@/features/partner-offer/hook/usePartnerOfferData';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
-import type { IDiscountDTO } from '@/entities/partner/model/partner.dto';
+import { DiscountCard } from '@/entities/partner/ui/DiscountCard';
 
 import { FILE_API } from '@/shared/api/urls';
+import { normalizeRichText, normalizeSiteUrl } from '@/shared/lib/partner-offer-utils';
 import { lightTheme } from '@/shared/styles/tokens';
+import Button from '@/shared/ui/Button';
+import ModalSlide from '@/shared/ui/ModalSlide';
 
 const PARTNER_IMAGE_PLACEHOLDER = require('../../shared/assets/placeholder.jpg');
 
@@ -38,6 +41,7 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const [hasImageError, setHasImageError] = useState(false);
 	const [isOpeningSite, setIsOpeningSite] = useState(false);
+	const [isDescriptionModalVisible, setIsDescriptionModalVisible] = useState(false);
 	const hasValidId = Boolean(partnerId?.trim());
 
 	const cleanSubtitle = useMemo(() => normalizeRichText(partner?.subtitle), [partner?.subtitle]);
@@ -50,9 +54,9 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 		return (
 			<View style={styles.centerState}>
 				<Text style={styles.errorText}>Не удалось определить предложение партнера</Text>
-				<Pressable style={styles.actionButton} onPress={() => router.back()}>
-					<Text style={styles.actionButtonText}>Назад</Text>
-				</Pressable>
+				<View style={styles.stateActionButton}>
+					<Button title="Назад" onPress={() => router.back()} />
+				</View>
 			</View>
 		);
 	}
@@ -69,9 +73,9 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 		return (
 			<View style={styles.centerState}>
 				<Text style={styles.errorText}>Не удалось загрузить данные партнера</Text>
-				<Pressable style={styles.actionButton} onPress={() => void refetch()}>
-					<Text style={styles.actionButtonText}>Повторить</Text>
-				</Pressable>
+				<View style={styles.stateActionButton}>
+					<Button title="Повторить" onPress={() => void refetch()} />
+				</View>
 			</View>
 		);
 	}
@@ -100,7 +104,6 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 		<ScrollView style={styles.container} contentContainerStyle={styles.content}>
 			<Pressable style={styles.backButton} onPress={() => router.back()}>
 				<ArrowLeft size={18} color={lightTheme.colors.textColor} />
-				<Text style={styles.backText}>Назад</Text>
 			</Pressable>
 
 			<View style={styles.partnerCard}>
@@ -137,18 +140,19 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 				<Text style={styles.partnerTitle}>{partner.companyName}</Text>
 				{cleanSubtitle ? <Text style={styles.partnerSubtitle}>{cleanSubtitle}</Text> : null}
 				{cleanDescription ? (
-					<Text style={styles.partnerDescription}>{cleanDescription}</Text>
+					<Button
+						title="Открыть описание"
+						variant="secondary"
+						onPress={() => setIsDescriptionModalVisible(true)}
+					/>
 				) : null}
 
 				{canOpenSite ? (
-					<Pressable
-						style={[styles.siteButton, isOpeningSite ? styles.siteButtonDisabled : null]}
+					<Button
+						title={isOpeningSite ? 'Открытие...' : 'Перейти на сайт'}
 						onPress={() => void handleOpenSite()}
 						disabled={isOpeningSite}
-					>
-						<Text style={styles.siteButtonText}>Перейти на сайт</Text>
-						<ExternalLink size={16} color={lightTheme.colors.accentTextColor} />
-					</Pressable>
+					/>
 				) : null}
 			</View>
 
@@ -162,71 +166,37 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 					</View>
 				)}
 			</View>
+
+			<ModalSlide
+				visible={isDescriptionModalVisible}
+				onClose={() => setIsDescriptionModalVisible(false)}
+				contentStyle={styles.modalCard}
+			>
+				<Text style={styles.modalTitle}>О партнере</Text>
+				<ScrollView
+					style={styles.modalDescriptionScroll}
+					contentContainerStyle={styles.modalDescriptionContent}
+					showsVerticalScrollIndicator={false}
+				>
+					<Text style={styles.partnerDescription}>{cleanDescription}</Text>
+				</ScrollView>
+				<View style={styles.modalButtons}>
+					{canOpenSite ? (
+						<Button
+							title={isOpeningSite ? 'Открытие...' : 'Перейти на сайт'}
+							onPress={() => void handleOpenSite()}
+							disabled={isOpeningSite}
+						/>
+					) : null}
+					<Button
+						title="Закрыть"
+						variant="secondary"
+						onPress={() => setIsDescriptionModalVisible(false)}
+					/>
+				</View>
+			</ModalSlide>
 		</ScrollView>
 	);
-}
-
-type DiscountCardProps = {
-	discount: IDiscountDTO;
-};
-
-function DiscountCard({ discount }: DiscountCardProps) {
-	const title = discount.name?.trim() || 'Без названия';
-	const description = normalizeRichText(discount.description);
-	const sizeLabel = formatDiscountSize(discount.size);
-
-	return (
-		<View style={styles.discountCard}>
-			<View style={styles.discountHeader}>
-				<Text style={styles.discountTitle}>{title}</Text>
-				{sizeLabel ? (
-					<View style={styles.discountBadge}>
-						<Text style={styles.discountBadgeText}>{sizeLabel}</Text>
-					</View>
-				) : null}
-			</View>
-			{description ? <Text style={styles.discountDescription}>{description}</Text> : null}
-		</View>
-	);
-}
-
-function normalizeRichText(value?: string) {
-	if (!value) {
-		return '';
-	}
-
-	return value
-		.replace(/!\[.*?\]\(.*?\)/g, '')
-		.replace(/\[(.*?)\]\(.*?\)/g, '$1')
-		.replace(/<[^>]+>/g, ' ')
-		.replace(/[#*_`>|-]/g, ' ')
-		.replace(/\r?\n+/g, ' ')
-		.replace(/\s{2,}/g, ' ')
-		.trim();
-}
-
-function formatDiscountSize(size?: number) {
-	if (typeof size !== 'number' || Number.isNaN(size)) {
-		return null;
-	}
-
-	if (Number.isInteger(size)) {
-		return `${size}%`;
-	}
-
-	return `${size.toString().replace('.', ',')}%`;
-}
-
-function normalizeSiteUrl(site?: string) {
-	if (!site) {
-		return null;
-	}
-
-	if (site.startsWith('http://') || site.startsWith('https://')) {
-		return site;
-	}
-
-	return `https://${site}`;
 }
 
 const styles = StyleSheet.create({
@@ -276,9 +246,9 @@ const styles = StyleSheet.create({
 	imageContainer: {
 		position: 'relative',
 		width: '100%',
-		height: 180,
 		borderRadius: 14,
 		overflow: 'hidden',
+		aspectRatio: 16 / 7,
 	},
 	partnerImage: {
 		...StyleSheet.absoluteFillObject,
@@ -311,25 +281,6 @@ const styles = StyleSheet.create({
 		color: lightTheme.colors.textColor,
 		opacity: 0.95,
 	},
-	siteButton: {
-		height: 44,
-		paddingHorizontal: 14,
-		borderRadius: 10,
-		backgroundColor: lightTheme.colors.accentColor,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		gap: 8,
-	},
-	siteButtonDisabled: {
-		opacity: 0.6,
-	},
-	siteButtonText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 15,
-		fontWeight: 700,
-		color: lightTheme.colors.accentTextColor,
-	},
 	section: {
 		gap: 10,
 	},
@@ -338,46 +289,6 @@ const styles = StyleSheet.create({
 		fontSize: 24,
 		fontWeight: 700,
 		color: lightTheme.colors.textColor,
-	},
-	discountCard: {
-		borderRadius: 14,
-		padding: 14,
-		backgroundColor: lightTheme.colors.clearWhite,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		gap: 10,
-	},
-	discountHeader: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		justifyContent: 'space-between',
-		gap: 8,
-	},
-	discountTitle: {
-		flex: 1,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 18,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-	},
-	discountDescription: {
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 15,
-		lineHeight: 22,
-		color: lightTheme.colors.textColor,
-		opacity: 0.92,
-	},
-	discountBadge: {
-		paddingHorizontal: 10,
-		paddingVertical: 4,
-		borderRadius: 999,
-		backgroundColor: lightTheme.colors.accentColor,
-	},
-	discountBadgeText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 14,
-		fontWeight: 700,
-		color: lightTheme.colors.accentTextColor,
 	},
 	emptyCard: {
 		borderRadius: 14,
@@ -399,18 +310,28 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginBottom: 12,
 	},
-	actionButton: {
-		height: 42,
-		paddingHorizontal: 16,
-		borderRadius: 10,
-		backgroundColor: lightTheme.colors.accentColor,
-		alignItems: 'center',
-		justifyContent: 'center',
+	stateActionButton: {
+		width: '100%',
+		maxWidth: 260,
+		marginTop: 8,
 	},
-	actionButtonText: {
+	modalCard: {
+		maxHeight: '85%',
+		gap: 12,
+	},
+	modalTitle: {
 		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 14,
+		fontSize: 22,
 		fontWeight: 700,
-		color: lightTheme.colors.accentTextColor,
+		color: lightTheme.colors.textColor,
+	},
+	modalDescriptionScroll: {
+		flexGrow: 0,
+	},
+	modalDescriptionContent: {
+		paddingBottom: 4,
+	},
+	modalButtons: {
+		gap: 10,
 	},
 });
