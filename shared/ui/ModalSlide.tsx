@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { Modal, Pressable, type StyleProp, StyleSheet, type ViewStyle } from 'react-native';
 
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+	Easing,
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+} from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { lightTheme } from '../styles/tokens';
 
@@ -24,43 +30,80 @@ export default function ModalSlide({
 	contentStyle,
 	closeOnBackdropPress = true,
 	backdropOpacity: targetBackdropOpacity = 0.4,
-	enterDuration = 220,
-	exitDuration = 180,
+	enterDuration = 280,
+	exitDuration = 220,
 }: IModalSlideProps) {
 	const [isMounted, setIsMounted] = useState(visible);
+	const insets = useSafeAreaInsets();
 	const overlayOpacity = useSharedValue(visible ? 1 : 0);
-	const contentTranslateY = useSharedValue(visible ? 0 : 24);
+	const contentTranslateY = useSharedValue(visible ? 0 : 28);
+	const contentOpacity = useSharedValue(visible ? 1 : 0);
 
 	const overlayAnimatedStyle = useAnimatedStyle(() => ({
 		opacity: overlayOpacity.value,
 	}));
 
 	const contentAnimatedStyle = useAnimatedStyle(() => ({
+		opacity: contentOpacity.value,
 		transform: [{ translateY: contentTranslateY.value }],
 	}));
 
 	useEffect(() => {
+		const contentEnterDuration = enterDuration;
+		const overlayEnterDuration = enterDuration + 40;
+		const contentExitDuration = exitDuration;
+		const overlayExitDuration = exitDuration + 40;
+
 		if (visible) {
 			setIsMounted(true);
 			overlayOpacity.value = 0;
-			contentTranslateY.value = 24;
-			overlayOpacity.value = withTiming(1, { duration: enterDuration });
-			contentTranslateY.value = withTiming(0, { duration: enterDuration });
+			contentTranslateY.value = 28;
+			contentOpacity.value = 0;
+			overlayOpacity.value = withTiming(1, {
+				duration: overlayEnterDuration,
+				easing: Easing.out(Easing.linear),
+			});
+			contentTranslateY.value = withTiming(0, {
+				duration: contentEnterDuration,
+				easing: Easing.out(Easing.cubic),
+			});
+			contentOpacity.value = withTiming(1, {
+				duration: contentEnterDuration - 20,
+				easing: Easing.out(Easing.linear),
+			});
 			return;
 		}
 
-		overlayOpacity.value = withTiming(0, { duration: exitDuration });
-		contentTranslateY.value = withTiming(24, { duration: exitDuration });
+		overlayOpacity.value = withTiming(0, {
+			duration: overlayExitDuration,
+			easing: Easing.in(Easing.quad),
+		});
+		contentTranslateY.value = withTiming(24, {
+			duration: contentExitDuration,
+			easing: Easing.in(Easing.cubic),
+		});
+		contentOpacity.value = withTiming(0, {
+			duration: contentExitDuration - 20,
+			easing: Easing.in(Easing.quad),
+		});
 
 		const unmountTimeout = setTimeout(() => {
 			setIsMounted(false);
-		}, exitDuration);
+		}, overlayExitDuration);
 
 		return () => clearTimeout(unmountTimeout);
-	}, [contentTranslateY, enterDuration, exitDuration, overlayOpacity, visible]);
+	}, [contentOpacity, contentTranslateY, enterDuration, exitDuration, overlayOpacity, visible]);
 
 	return (
-		<Modal visible={isMounted} animationType="none" transparent onRequestClose={onClose}>
+		<Modal
+			visible={isMounted}
+			animationType="none"
+			transparent
+			presentationStyle="overFullScreen"
+			statusBarTranslucent
+			navigationBarTranslucent
+			onRequestClose={onClose}
+		>
 			<Animated.View
 				style={[
 					styles.overlay,
@@ -71,7 +114,14 @@ export default function ModalSlide({
 				{closeOnBackdropPress ? (
 					<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 				) : null}
-				<Animated.View style={[styles.content, contentStyle, contentAnimatedStyle]}>
+				<Animated.View
+					style={[
+						styles.content,
+						{ paddingBottom: Math.max(20, insets.bottom + 8) },
+						contentStyle,
+						contentAnimatedStyle,
+					]}
+				>
 					{children}
 				</Animated.View>
 			</Animated.View>
@@ -86,9 +136,9 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		padding: 16,
-		paddingBottom: 20,
 		borderTopLeftRadius: 18,
 		borderTopRightRadius: 18,
-		backgroundColor: lightTheme.colors.clearWhite,
+		backgroundColor: lightTheme.colors.bgWhite,
+		overflow: 'hidden',
 	},
 });

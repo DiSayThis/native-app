@@ -6,3 +6,10 @@ export interface IUserDto {
 	role: RolesEnum;
 	error?: string;
 }
+
+export interface IUserProfileDto {
+	id: string;
+	email?: string;
+	firstName?: string;
+	lastName?: string;
+}

@@ -10,7 +10,7 @@ import {
 
 import { lightTheme } from '../styles/tokens';
 
-type ButtonVariant = 'primary' | 'secondary';
+type ButtonVariant = 'primary' | 'secondary' | 'white';
 
 interface IButtonProps extends PressableProps {
 	title?: string;
@@ -28,6 +28,13 @@ const variantColors = {
 	},
 	secondary: {
 		background: lightTheme.colors.bgWhite,
+		backgroundHover: lightTheme.colors.hoverBgSecondary,
+		text: lightTheme.colors.textColor,
+		textHover: lightTheme.colors.textColor,
+		borderColor: lightTheme.colors.borderColor,
+	},
+	white: {
+		background: lightTheme.colors.clearWhite,
 		backgroundHover: lightTheme.colors.hoverBgSecondary,
 		text: lightTheme.colors.textColor,
 		textHover: lightTheme.colors.textColor,

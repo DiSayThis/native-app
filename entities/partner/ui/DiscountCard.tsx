@@ -1,18 +1,25 @@
+import { useState } from 'react';
+
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { IDiscountDTO } from '@/entities/partner/model/partner.dto';
+import { DiscountPromocodeModal } from '@/entities/partner/ui/DiscountPromocodeModal';
 
-import { formatDiscountSize, normalizeRichText } from '@/shared/lib/partner-offer-utils';
+import { formatDiscountSize } from '@/shared/lib/partner-offer-utils';
 import { lightTheme } from '@/shared/styles/tokens';
+import Button from '@/shared/ui/Button';
+import MarkdownText from '@/shared/ui/MarkdownText';
 
 type DiscountCardProps = {
 	discount: IDiscountDTO;
+	studentId?: string | null;
 };
 
-export function DiscountCard({ discount }: DiscountCardProps) {
+export function DiscountCard({ discount, studentId }: DiscountCardProps) {
+	const [isPromocodeModalVisible, setIsPromocodeModalVisible] = useState(false);
 	const title = discount.name?.trim() || 'Без названия';
-	const description = normalizeRichText(discount.description);
 	const sizeLabel = formatDiscountSize(discount.size);
+	const canRequestPromocode = Boolean(studentId);
 
 	return (
 		<View style={styles.discountCard}>
@@ -24,7 +31,21 @@ export function DiscountCard({ discount }: DiscountCardProps) {
 					</View>
 				) : null}
 			</View>
-			{description ? <Text style={styles.discountDescription}>{description}</Text> : null}
+			{discount.description ? <MarkdownText content={discount.description} /> : null}
+			{canRequestPromocode ? (
+				<Button
+					title="Получить промокод"
+					variant="primary"
+					onPress={() => setIsPromocodeModalVisible(true)}
+				/>
+			) : null}
+
+			<DiscountPromocodeModal
+				visible={isPromocodeModalVisible}
+				discount={discount}
+				studentId={studentId}
+				onClose={() => setIsPromocodeModalVisible(false)}
+			/>
 		</View>
 	);
 }
@@ -47,16 +68,9 @@ const styles = StyleSheet.create({
 	discountTitle: {
 		flex: 1,
 		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 18,
+		fontSize: 20,
 		fontWeight: 700,
 		color: lightTheme.colors.textColor,
-	},
-	discountDescription: {
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 15,
-		lineHeight: 22,
-		color: lightTheme.colors.textColor,
-		opacity: 0.92,
 	},
 	discountBadge: {
 		paddingHorizontal: 10,

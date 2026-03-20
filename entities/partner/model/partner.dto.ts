@@ -35,3 +35,8 @@ export interface IDiscountDTO {
 	hasAllRegions?: boolean;
 	regions?: unknown[];
 }
+
+export interface IPromocodeDTO {
+	promocode?: string;
+	promocodeValue?: string;
+}
