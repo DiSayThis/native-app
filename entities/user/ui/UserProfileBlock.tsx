@@ -75,12 +75,10 @@ export function UserProfileBlock({
 const styles = StyleSheet.create({
 	profileBlock: {
 		alignItems: 'center',
-		paddingTop: lightTheme.spacing.x6,
-		gap: 14,
 	},
 	avatarCircle: {
-		width: 132,
-		height: 132,
+		width: 100,
+		height: 100,
 		borderRadius: 66,
 		overflow: 'hidden',
 		backgroundColor: lightTheme.colors.bgSecondary,
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
 	},
 	nameText: {
 		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 28,
+		fontSize: 24,
 		fontWeight: 700,
 		color: lightTheme.colors.textColor,
 		textAlign: 'center',

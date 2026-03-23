@@ -1,7 +1,7 @@
 import { Redirect } from 'expo-router';
 import { useAtomValue } from 'jotai';
 
-import RegistrationPageView from '@/pages/public-pages/RegistrationPage';
+import RegistrationPageView from '@/pages/RegistrationPage';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 

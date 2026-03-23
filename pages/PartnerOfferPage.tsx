@@ -35,7 +35,7 @@ import Button from '@/shared/ui/Button';
 import MarkdownText from '@/shared/ui/MarkdownText';
 import ModalSlide from '@/shared/ui/ModalSlide';
 
-const PARTNER_IMAGE_PLACEHOLDER = require('../../shared/assets/placeholder.jpg');
+const PARTNER_IMAGE_PLACEHOLDER = require('../shared/assets/placeholder.jpg');
 const FIXED_HEADER_HEIGHT = 56;
 const FIXED_HEADER_GRADIENT_HEIGHT = 96;
 

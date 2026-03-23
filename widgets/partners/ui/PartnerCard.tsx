@@ -1,10 +1,13 @@
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 import { Star } from 'lucide-react-native';
 import Animated, {
+	Easing,
+	FadeInUp,
+	FadeOutDown,
 	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
@@ -22,13 +25,20 @@ const PARTNER_IMAGE_PLACEHOLDER = require('../../../shared/assets/placeholder.jp
 
 type PartnerCardProps = {
 	item: IPartnerCard;
+	index: number;
 };
 
-export const PartnerCard = memo(function PartnerCard({ item }: PartnerCardProps) {
+const ENTER_STAGGER_STEP = 40;
+const ENTER_STAGGER_MAX_DELAY = 280;
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCardProps) {
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const [hasImageError, setHasImageError] = useState(false);
 	const starScale = useSharedValue(1);
 	const starRotate = useSharedValue(0);
+	const enterDelay = Math.min(index * ENTER_STAGGER_STEP, ENTER_STAGGER_MAX_DELAY);
 	const { isFavorite, canToggleFavorite, isToggling, toggleFavorite } = usePartnerFavoriteToggle({
 		partnerId: item.id,
 	});
@@ -52,8 +62,20 @@ export const PartnerCard = memo(function PartnerCard({ item }: PartnerCardProps)
 		transform: [{ scale: starScale.value }, { rotate: `${starRotate.value}deg` }],
 	}));
 
+	const enteringAnimation = useMemo(
+		() => FadeInUp.duration(320).delay(enterDelay).easing(Easing.out(Easing.cubic)),
+		[enterDelay],
+	);
+
+	const exitingAnimation = useMemo(
+		() => FadeOutDown.duration(230).easing(Easing.in(Easing.cubic)),
+		[],
+	);
+
 	return (
-		<Pressable
+		<AnimatedPressable
+			entering={enteringAnimation}
+			exiting={exitingAnimation}
 			style={[styles.card, item.isFixed ? styles.fixedCard : null]}
 			onPress={() => router.push(`/partner-offer/${item.id}`)}
 		>
@@ -110,7 +132,7 @@ export const PartnerCard = memo(function PartnerCard({ item }: PartnerCardProps)
 					<Text style={styles.discountText}>{item.discount ? `${item.discount}%` : '0%'}</Text>
 				</View>
 			</View>
-		</Pressable>
+		</AnimatedPressable>
 	);
 });
 

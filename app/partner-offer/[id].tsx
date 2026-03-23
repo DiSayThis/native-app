@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 
-import PartnerOfferPageView from '@/pages/public-pages/PartnerOfferPage';
+import PartnerOfferPageView from '@/pages/PartnerOfferPage';
 
 export default function PartnerOfferPage() {
 	const { id } = useLocalSearchParams<{

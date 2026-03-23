@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { lightTheme } from '@/shared/styles/tokens';
 
-export default function MainPage() {
+export default function WalletPage() {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Кошелек</Text>

@@ -3,6 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { GalleryVerticalEnd } from 'lucide-react-native';
+import Animated, {
+	Easing,
+	interpolateColor,
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+} from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
 
 import type { ICategoryDTO } from '@/entities/partner/model/partner.dto';
@@ -25,6 +32,9 @@ type CategoryItemProps = {
 };
 
 const ICON_SIZE = 24;
+const SELECTION_ANIMATION_DURATION = 240;
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 	const initialType = useMemo(() => getCategoryIconType(item.IconUrl), [item.IconUrl]);
@@ -35,9 +45,23 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 	const [resolvedType, setResolvedType] = useState(initialType);
 	const [svgXml, setSvgXml] = useState<string | null>(() => getCachedSvgXml(item.IconUrl));
 	const [hasRasterError, setHasRasterError] = useState(false);
+	const [chipWidth, setChipWidth] = useState(0);
+	const selectionProgress = useSharedValue(isSelected ? 1 : 0);
 	const safeSvgXml = useMemo(() => (svgXml && isSvgXmlDocument(svgXml) ? svgXml : null), [svgXml]);
 	const shouldRenderSvg = resolvedType === 'svg';
 	const shouldShowPlaceholder = !item.IconUrl || (shouldRenderSvg ? !safeSvgXml : hasRasterError);
+
+	const animatedChipStyle = useAnimatedStyle(() => ({
+		borderColor: interpolateColor(
+			selectionProgress.value,
+			[0, 1],
+			[lightTheme.colors.borderColor, lightTheme.colors.accentColor],
+		),
+	}));
+
+	const animatedFillStyle = useAnimatedStyle(() => ({
+		width: chipWidth * selectionProgress.value,
+	}));
 
 	useEffect(() => {
 		let isMounted = true;
@@ -88,11 +112,26 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 		};
 	}, [item.IconUrl, resolvedType, svgXml]);
 
+	useEffect(() => {
+		selectionProgress.value = withTiming(isSelected ? 1 : 0, {
+			duration: SELECTION_ANIMATION_DURATION,
+			easing: Easing.out(Easing.cubic),
+		});
+	}, [isSelected, selectionProgress]);
+
 	return (
-		<Pressable
+		<AnimatedPressable
 			onPress={onPress}
-			style={[styles.categoryChip, isSelected ? styles.categoryChipActive : null]}
+			onLayout={(event) => {
+				const nextWidth = event.nativeEvent.layout.width;
+				if (nextWidth && nextWidth !== chipWidth) {
+					setChipWidth(nextWidth);
+				}
+			}}
+			style={[styles.categoryChip, animatedChipStyle]}
 		>
+			<Animated.View pointerEvents="none" style={[styles.selectionFill, animatedFillStyle]} />
+
 			<View style={styles.content}>
 				<View style={styles.iconSlot}>
 					{item.IconUrl ? (
@@ -140,7 +179,7 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 					{item.name}
 				</Text>
 			</View>
-		</Pressable>
+		</AnimatedPressable>
 	);
 }
 
@@ -152,16 +191,21 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: lightTheme.colors.borderColor,
 		backgroundColor: lightTheme.colors.clearWhite,
+		overflow: 'hidden',
 	},
-	categoryChipActive: {
+	selectionFill: {
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		left: 0,
 		backgroundColor: lightTheme.colors.accentColor,
-		borderColor: lightTheme.colors.accentColor,
 	},
 	content: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		gap: 6,
 		minHeight: 24,
+		zIndex: 1,
 	},
 	iconSlot: {
 		width: ICON_SIZE,

@@ -97,7 +97,9 @@ export function PartnersListScreen({ data, hideCategories = false }: PartnersLis
 	const keyExtractor = useCallback((item: IPartnerCard) => item.id, []);
 
 	const renderPartnerItem = useCallback(
-		({ item }: { item: IPartnerCard }) => <PartnerCard item={item} />,
+		({ item, index }: { item: IPartnerCard; index: number }) => (
+			<PartnerCard item={item} index={index} />
+		),
 		[],
 	);
 

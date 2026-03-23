@@ -21,9 +21,11 @@ export async function getCategoriesQuery(): Promise<ICategoryDTO[]> {
 		.catch(() => []);
 }
 
-export async function getPartnersQuery(): Promise<IPartnerCard[]> {
+export async function getPartnersQuery(regionId?: string | null): Promise<IPartnerCard[]> {
+	const params = regionId ? { RegionId: regionId } : undefined;
+
 	return promocodeApi
-		.get<IPartnerDTO[]>('/Partners')
+		.get<IPartnerDTO[]>('/Partners', params)
 		.then((data) => (Array.isArray(data) ? data : []).map(mapPartnerToCard))
 		.catch(() => []);
 }

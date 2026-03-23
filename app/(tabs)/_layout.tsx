@@ -52,7 +52,7 @@ export default function TabsLayout() {
 			}}
 		>
 			<Tabs.Screen
-				name="index"
+				name="wallet"
 				options={{
 					title: 'Кошелек',
 					tabBarIcon: ({ color, size }) => <Wallet color={color} size={size} />,

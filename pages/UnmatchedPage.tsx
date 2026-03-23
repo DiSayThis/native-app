@@ -10,7 +10,7 @@ export default function UnmatchedPage() {
 		<View style={styles.container}>
 			<Text style={styles.header}>Ой что-то пошло не так</Text>
 			<Text style={styles.text}>Попробуйте вернуться на главный экран приложения</Text>
-			<Button style={styles.link} onPress={() => router.back()}>
+			<Button style={styles.link} onPress={() => router.push('/discounts')}>
 				Вернуться на главный экран
 			</Button>
 		</View>
