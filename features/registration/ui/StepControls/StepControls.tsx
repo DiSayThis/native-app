@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
+
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Link } from 'expo-router';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 interface IStepControlsProps {
 	isValidating?: boolean;
@@ -26,6 +29,8 @@ export default function StepControls({
 }: IStepControlsProps) {
 	const isLast = maxStep === step;
 	const isBusy = Boolean(isValidating || isSubmitting);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	return (
 		<>
@@ -62,22 +67,23 @@ export default function StepControls({
 	);
 }
 
-const styles = StyleSheet.create({
-	wrapper: {
-		flexDirection: 'column-reverse',
-		gap: 10,
-	},
-	buttonWrap: {
-		flex: 1,
-	},
-	loginText: {
-		textAlign: 'center',
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 14,
-	},
-	loginLink: {
-		textDecorationLine: 'underline',
-		color: lightTheme.colors.accentColor,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		wrapper: {
+			flexDirection: 'column-reverse',
+			gap: 10,
+		},
+		buttonWrap: {
+			flex: 1,
+		},
+		loginText: {
+			textAlign: 'center',
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+			fontSize: 14,
+		},
+		loginLink: {
+			textDecorationLine: 'underline',
+			color: theme.colors.accentColor,
+		},
+	});

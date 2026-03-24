@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -8,8 +8,9 @@ import { z } from 'zod';
 
 import { authQueries } from '@/entities/auth/api/query';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import { RHFInput } from '@/shared/ui/inputs';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 interface IForgotPasswordModalProps {
 	visible: boolean;
@@ -28,6 +29,8 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSentSuccessfully, setIsSentSuccessfully] = useState(false);
 	const [requestError, setRequestError] = useState<string | null>(null);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 	const { control, handleSubmit, reset } = useForm<IForgotPasswordValues>({
 		resolver: zodResolver(forgotPasswordSchema),
 		defaultValues: {
@@ -93,7 +96,7 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 								style={styles.primaryButton}
 							>
 								{isLoading ? (
-									<ActivityIndicator color={lightTheme.colors.accentTextColor} />
+									<ActivityIndicator color={theme.colors.accentTextColor} />
 								) : (
 									<Text style={styles.primaryButtonText}>Отправить</Text>
 								)}
@@ -106,49 +109,50 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 	);
 }
 
-const styles = StyleSheet.create({
-	backdrop: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: 24,
-		backgroundColor: 'rgba(0, 0, 0, 0.4)',
-	},
-	card: {
-		width: '100%',
-		maxWidth: 420,
-		backgroundColor: lightTheme.colors.bgWhite,
-		borderRadius: 20,
-		padding: 20,
-		gap: 12,
-	},
-	title: {
-		fontSize: 24,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		color: lightTheme.colors.textColor,
-	},
-	description: {
-		fontSize: 16,
-		fontFamily: lightTheme.typography.fontFamily,
-		color: lightTheme.colors.textColor,
-		lineHeight: 22,
-	},
-	errorText: {
-		fontSize: 14,
-		color: lightTheme.colors.error,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	primaryButton: {
-		height: 48,
-		borderRadius: 12,
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: lightTheme.colors.accentColor,
-	},
-	primaryButtonText: {
-		fontSize: 16,
-		textTransform: 'uppercase',
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		color: lightTheme.colors.accentTextColor,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		backdrop: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+			padding: 24,
+			backgroundColor: 'rgba(0, 0, 0, 0.4)',
+		},
+		card: {
+			width: '100%',
+			maxWidth: 420,
+			backgroundColor: theme.colors.bgWhite,
+			borderRadius: 20,
+			padding: 20,
+			gap: 12,
+		},
+		title: {
+			fontSize: 24,
+			fontFamily: theme.typography.fontFamilyHeadings,
+			color: theme.colors.textColor,
+		},
+		description: {
+			fontSize: 16,
+			fontFamily: theme.typography.fontFamily,
+			color: theme.colors.textColor,
+			lineHeight: 22,
+		},
+		errorText: {
+			fontSize: 14,
+			color: theme.colors.error,
+			fontFamily: theme.typography.fontFamily,
+		},
+		primaryButton: {
+			height: 48,
+			borderRadius: 12,
+			alignItems: 'center',
+			justifyContent: 'center',
+			backgroundColor: theme.colors.accentColor,
+		},
+		primaryButtonText: {
+			fontSize: 16,
+			textTransform: 'uppercase',
+			fontFamily: theme.typography.fontFamilyHeadings,
+			color: theme.colors.accentTextColor,
+		},
+	});

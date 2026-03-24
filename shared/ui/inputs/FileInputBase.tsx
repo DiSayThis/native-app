@@ -5,7 +5,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import { Paperclip, X } from 'lucide-react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { FormFieldShell } from './FormFieldShell';
 
@@ -41,6 +42,8 @@ export function FileInputBase({
 	placeholder,
 	disabled = false,
 }: IFileInputBaseProps) {
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 	const files = useMemo(() => toFileList(value), [value]);
 
 	const pickFiles = async () => {
@@ -78,7 +81,7 @@ export function FileInputBase({
 				disabled={disabled}
 			>
 				<View style={styles.left}>
-					<Paperclip size={16} color={lightTheme.colors.labelColor} />
+					<Paperclip size={16} color={theme.colors.labelColor} />
 					<Text
 						style={[styles.text, files.length === 0 ? styles.placeholder : null]}
 						numberOfLines={1}
@@ -91,7 +94,7 @@ export function FileInputBase({
 
 				{showClearButton && files.length > 0 && !disabled ? (
 					<Pressable onPress={clearFiles} style={styles.iconButton}>
-						<X size={16} color={lightTheme.colors.labelColor} />
+						<X size={16} color={theme.colors.labelColor} />
 					</Pressable>
 				) : null}
 			</Pressable>
@@ -99,46 +102,47 @@ export function FileInputBase({
 	);
 }
 
-const styles = StyleSheet.create({
-	input: {
-		minHeight: 48,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 12,
-		paddingHorizontal: 12,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		backgroundColor: lightTheme.colors.clearWhite,
-	},
-	errorBorder: {
-		borderColor: lightTheme.colors.error,
-	},
-	focusedBorder: {
-		borderColor: lightTheme.colors.accentColor,
-	},
-	disabled: {
-		opacity: 0.6,
-	},
-	left: {
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 8,
-	},
-	text: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	placeholder: {
-		color: lightTheme.colors.labelColor,
-	},
-	iconButton: {
-		width: 28,
-		height: 28,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		input: {
+			minHeight: 48,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 12,
+			paddingHorizontal: 12,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			backgroundColor: theme.colors.clearWhite,
+		},
+		errorBorder: {
+			borderColor: theme.colors.error,
+		},
+		focusedBorder: {
+			borderColor: theme.colors.accentColor,
+		},
+		disabled: {
+			opacity: 0.6,
+		},
+		left: {
+			flex: 1,
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 8,
+		},
+		text: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		placeholder: {
+			color: theme.colors.labelColor,
+		},
+		iconButton: {
+			width: 28,
+			height: 28,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+	});

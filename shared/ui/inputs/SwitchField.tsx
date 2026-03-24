@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
+
 import { StyleSheet, Switch, Text, View } from 'react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { FormFieldShell } from './FormFieldShell';
 
@@ -19,6 +22,9 @@ export function SwitchField({
 	onChange,
 	disabled,
 }: ISwitchFieldProps) {
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
+
 	return (
 		<FormFieldShell errorText={errorText}>
 			<View style={styles.row}>
@@ -28,8 +34,8 @@ export function SwitchField({
 					value={value}
 					onValueChange={onChange}
 					trackColor={{
-						false: lightTheme.colors.hoverBgSecondary,
-						true: lightTheme.colors.accentColor,
+						false: theme.colors.hoverBgSecondary,
+						true: theme.colors.accentColor,
 					}}
 				/>
 			</View>
@@ -37,16 +43,17 @@ export function SwitchField({
 	);
 }
 
-const styles = StyleSheet.create({
-	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	label: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		row: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
+		label: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+	});

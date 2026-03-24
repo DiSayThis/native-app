@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 const TAB_SIDE_OFFSET = 16;
 const TAB_BOTTOM_OFFSET = 12;
@@ -15,6 +15,7 @@ const TAB_HEIGHT = 68;
 export default function TabsLayout() {
 	const insets = useSafeAreaInsets();
 	const { id } = useAtomValue(authAtom);
+	const { theme } = useTheme();
 
 	if (!id) {
 		return <Redirect href="/login" />;
@@ -24,9 +25,9 @@ export default function TabsLayout() {
 		<Tabs
 			screenOptions={{
 				headerShown: false,
-				sceneStyle: { backgroundColor: lightTheme.colors.background },
-				tabBarActiveTintColor: lightTheme.colors.textColor,
-				tabBarInactiveTintColor: lightTheme.colors.gray,
+				sceneStyle: { backgroundColor: theme.colors.background },
+				tabBarActiveTintColor: theme.colors.textColor,
+				tabBarInactiveTintColor: theme.colors.gray,
 				tabBarHideOnKeyboard: true,
 
 				tabBarStyle: {
@@ -35,10 +36,10 @@ export default function TabsLayout() {
 					height: TAB_HEIGHT,
 					borderTopWidth: 0,
 					borderRadius: TAB_RADIUS,
-					paddingBottom: lightTheme.spacing.x2,
+					paddingBottom: theme.spacing.x2,
 					marginHorizontal: TAB_SIDE_OFFSET,
 					paddingTop: 6,
-					backgroundColor: lightTheme.colors.background,
+					backgroundColor: theme.colors.background,
 					elevation: 8,
 					shadowColor: '#000',
 					shadowOpacity: 0.08,
@@ -46,7 +47,7 @@ export default function TabsLayout() {
 					shadowRadius: 8,
 				},
 				tabBarLabelStyle: {
-					fontFamily: lightTheme.typography.fontFamily,
+					fontFamily: theme.typography.fontFamily,
 					fontSize: 12,
 				},
 			}}

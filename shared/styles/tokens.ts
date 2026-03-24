@@ -113,3 +113,47 @@ export const lightTheme: AppTheme = {
 		x6: 24,
 	},
 };
+
+export const darkTheme: AppTheme = {
+	name: 'dark',
+	colors: {
+		...BaseColor,
+		bgWhite: '#14171A',
+		clearWhite: '#1B2025',
+		textColor: '#F5F7FA',
+		bgBrown: '#252B31',
+		bgPurple: '#6F4A6F',
+		gray: '#96A1AD',
+		background: '#0F1216',
+		bgPrimary: '#8FE248',
+		bgSecondary: '#1F252B',
+		borderColor: 'rgba(255,255,255,0.18)',
+		labelColor: '#96A1AD',
+
+		hoverBgPrimary: '#9BE95E',
+		hoverBgSecondary: '#2A323A',
+		hoverBgWhite: '#252C33',
+
+		accentColor: '#8FE248',
+		accentHoverColor: '#9BE95E',
+		accentTextColor: '#07261F',
+		accentHoverTextColor: '#042A24',
+	},
+	typography: {
+		fontFamily: 'Mulish',
+		fontFamilyHeadings: 'NunitoSans',
+		fontSizeBase: FontsSize.f16,
+		fontSizeButtons: FontsSize.f16,
+		fontSizeHeading: FontsSize.f24,
+		headingsLetterSpacing: 1,
+		lineHeightBase: 18,
+	},
+	radius: 15,
+	spacing: {
+		x2: 8,
+		x3: 12,
+		x4: 16,
+		x5: 20,
+		x6: 24,
+	},
+};

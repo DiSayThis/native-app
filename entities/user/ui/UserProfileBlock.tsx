@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 import { FILE_API } from '@/shared/api/urls';
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 type UserProfileBlockProps = {
 	studentId: string;
@@ -24,6 +25,8 @@ export function UserProfileBlock({
 	onRetry,
 }: UserProfileBlockProps) {
 	const [hasAvatarError, setHasAvatarError] = useState(false);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	useEffect(() => {
 		setHasAvatarError(false);
@@ -58,7 +61,7 @@ export function UserProfileBlock({
 			</View>
 
 			{isLoading ? (
-				<ActivityIndicator color={lightTheme.colors.accentColor} />
+				<ActivityIndicator color={theme.colors.accentColor} />
 			) : (
 				<Text style={styles.nameText}>{fullName}</Text>
 			)}
@@ -72,40 +75,41 @@ export function UserProfileBlock({
 	);
 }
 
-const styles = StyleSheet.create({
-	profileBlock: {
-		alignItems: 'center',
-	},
-	avatarCircle: {
-		width: 100,
-		height: 100,
-		borderRadius: 66,
-		overflow: 'hidden',
-		backgroundColor: lightTheme.colors.bgSecondary,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	avatarImage: {
-		width: '100%',
-		height: '100%',
-	},
-	avatarFallbackText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 42,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-	},
-	nameText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 24,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-		textAlign: 'center',
-	},
-	retryButton: {
-		width: '100%',
-		maxWidth: 260,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		profileBlock: {
+			alignItems: 'center',
+		},
+		avatarCircle: {
+			width: 100,
+			height: 100,
+			borderRadius: 66,
+			overflow: 'hidden',
+			backgroundColor: theme.colors.bgSecondary,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		avatarImage: {
+			width: '100%',
+			height: '100%',
+		},
+		avatarFallbackText: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 42,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+		},
+		nameText: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 24,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+			textAlign: 'center',
+		},
+		retryButton: {
+			width: '100%',
+			maxWidth: 260,
+		},
+	});

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -12,12 +12,21 @@ import RegionSelectionModal from '@/entities/city-region/ui/RegionSelectionModal
 import { useUserProfile } from '@/entities/user/hook/useUserProfile';
 import { UserProfileBlock } from '@/entities/user/ui/UserProfileBlock';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
+
+const THEME_OPTIONS = [
+	{ value: 'system', label: 'Системная' },
+	{ value: 'dark', label: 'Темная' },
+	{ value: 'light', label: 'Светлая' },
+] as const;
 
 export default function ProfilePage() {
 	const [isRegionModalVisible, setIsRegionModalVisible] = useState(false);
 	const router = useRouter();
+	const { theme, themeMode, setThemeMode } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const { id: studentId } = useAtomValue(authAtom);
 	const { regionName } = useAtomValue(cityRegionAtom);
@@ -55,8 +64,33 @@ export default function ProfilePage() {
 								{regionName ?? 'Все регионы'}
 							</Text>
 						</View>
-						<ChevronRight size={18} color={lightTheme.colors.labelColor} />
+						<ChevronRight size={18} color={theme.colors.labelColor} />
 					</Pressable>
+					<View style={styles.menuDivider} />
+					<View style={styles.themeSwitcherBlock}>
+						<Text style={styles.menuLabel}>Тема</Text>
+						<View style={styles.themeButtons}>
+							{THEME_OPTIONS.map((option) => {
+								const isActive = themeMode === option.value;
+								return (
+									<Pressable
+										key={option.value}
+										style={[styles.themeButton, isActive ? styles.themeButtonActive : null]}
+										onPress={() => setThemeMode(option.value)}
+									>
+										<Text
+											style={[
+												styles.themeButtonText,
+												isActive ? styles.themeButtonTextActive : null,
+											]}
+										>
+											{option.label}
+										</Text>
+									</Pressable>
+								);
+							})}
+						</View>
+					</View>
 				</View>
 
 				<View style={styles.menuCard}>
@@ -67,7 +101,7 @@ export default function ProfilePage() {
 								Редактирование профиля
 							</Text>
 						</View>
-						<ChevronRight size={18} color={lightTheme.colors.labelColor} />
+						<ChevronRight size={18} color={theme.colors.labelColor} />
 					</Pressable>
 				</View>
 
@@ -79,7 +113,7 @@ export default function ProfilePage() {
 								Связаться с нами
 							</Text>
 						</View>
-						<ChevronRight size={18} color={lightTheme.colors.labelColor} />
+						<ChevronRight size={18} color={theme.colors.labelColor} />
 					</Pressable>
 					<View style={styles.menuDivider} />
 					<Pressable style={styles.menuRow} onPress={() => router.push('/privacy-policy')}>
@@ -89,7 +123,7 @@ export default function ProfilePage() {
 								Условия обработки данных
 							</Text>
 						</View>
-						<ChevronRight size={18} color={lightTheme.colors.labelColor} />
+						<ChevronRight size={18} color={theme.colors.labelColor} />
 					</Pressable>
 					<View style={styles.menuDivider} />
 					<Pressable style={styles.menuRow} onPress={() => router.push('/cookies-policy')}>
@@ -99,7 +133,7 @@ export default function ProfilePage() {
 								Правила использования cookies
 							</Text>
 						</View>
-						<ChevronRight size={18} color={lightTheme.colors.labelColor} />
+						<ChevronRight size={18} color={theme.colors.labelColor} />
 					</Pressable>
 				</View>
 			</View>
@@ -116,61 +150,96 @@ export default function ProfilePage() {
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: lightTheme.spacing.x4,
-		backgroundColor: lightTheme.colors.background,
-		gap: 14,
-	},
-	menuGroups: {
-		gap: 10,
-	},
-	menuCard: {
-		borderRadius: 14,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		backgroundColor: lightTheme.colors.clearWhite,
-		overflow: 'hidden',
-	},
-	menuRow: {
-		minHeight: 62,
-		paddingHorizontal: 14,
-		paddingVertical: 10,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	menuTextBlock: {
-		flex: 1,
-		gap: 4,
-		paddingRight: 12,
-	},
-	menuLabel: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-	},
-	menuValue: {
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 14,
-		color: lightTheme.colors.textColor,
-	},
-	menuValuePlaceholder: {
-		color: lightTheme.colors.labelColor,
-	},
-	menuDivider: {
-		height: 1,
-		backgroundColor: '#f1f1f1',
-	},
-	centered: {
-		justifyContent: 'center',
-	},
-	nameText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 28,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-		textAlign: 'center',
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			padding: theme.spacing.x4,
+			backgroundColor: theme.colors.background,
+			gap: 14,
+		},
+		menuGroups: {
+			gap: 10,
+		},
+		menuCard: {
+			borderRadius: 14,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.clearWhite,
+			overflow: 'hidden',
+		},
+		menuRow: {
+			minHeight: 62,
+			paddingHorizontal: 14,
+			paddingVertical: 10,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
+		menuTextBlock: {
+			flex: 1,
+			gap: 4,
+			paddingRight: 12,
+		},
+		menuLabel: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 16,
+			color: theme.colors.textColor,
+		},
+		menuValue: {
+			fontFamily: theme.typography.fontFamily,
+			fontSize: 14,
+			color: theme.colors.textColor,
+		},
+		menuValuePlaceholder: {
+			color: theme.colors.labelColor,
+		},
+		menuDivider: {
+			height: 1,
+			backgroundColor: theme.colors.borderColor,
+		},
+		themeSwitcherBlock: {
+			gap: 10,
+			paddingHorizontal: 14,
+			paddingTop: 10,
+			paddingBottom: 14,
+		},
+		themeButtons: {
+			flexDirection: 'row',
+			gap: 8,
+		},
+		themeButton: {
+			flex: 1,
+			minHeight: 40,
+			borderRadius: 10,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.bgSecondary,
+			alignItems: 'center',
+			justifyContent: 'center',
+			paddingHorizontal: 10,
+		},
+		themeButtonActive: {
+			backgroundColor: theme.colors.accentColor,
+			borderColor: theme.colors.accentColor,
+		},
+		themeButtonText: {
+			fontFamily: theme.typography.fontFamily,
+			fontSize: 13,
+			color: theme.colors.textColor,
+		},
+		themeButtonTextActive: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			color: theme.colors.accentTextColor,
+		},
+		centered: {
+			justifyContent: 'center',
+		},
+		nameText: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 28,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+			textAlign: 'center',
+		},
+	});

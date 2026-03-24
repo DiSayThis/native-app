@@ -9,6 +9,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useAppFonts } from '@/shared/lib/use-app-fonts';
 import { QueryProvider } from '@/shared/providers/QueryProvider';
 import { lightTheme } from '@/shared/styles/tokens';
+import { ThemeProvider, useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,7 +27,9 @@ export default function RootLayout() {
 	return (
 		<QueryProvider>
 			<SafeAreaProvider>
-				<RootNavigator />
+				<ThemeProvider>
+					<RootNavigator />
+				</ThemeProvider>
 			</SafeAreaProvider>
 		</QueryProvider>
 	);
@@ -41,14 +44,18 @@ const styles = StyleSheet.create({
 
 function RootNavigator() {
 	const insets = useSafeAreaInsets();
+	const { theme, scheme } = useTheme();
 
 	return (
 		<>
-			<StatusBar style="auto" backgroundColor={lightTheme.colors.background} />
+			<StatusBar
+				style={scheme === 'dark' ? 'light' : 'dark'}
+				backgroundColor={theme.colors.background}
+			/>
 			<Stack
 				screenOptions={{
 					headerShown: false,
-					contentStyle: { paddingTop: insets.top, backgroundColor: lightTheme.colors.background },
+					contentStyle: { paddingTop: insets.top, backgroundColor: theme.colors.background },
 				}}
 			/>
 		</>

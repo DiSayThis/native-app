@@ -5,7 +5,8 @@ import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Calendar, X } from 'lucide-react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { FormFieldShell } from './FormFieldShell';
 
@@ -67,6 +68,8 @@ export default function DateInput({
 }: IDateInputProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [draftDate, setDraftDate] = useState<Date | undefined>();
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const selectedDate = useMemo(() => parseToDate(value ?? defaultValue), [value, defaultValue]);
 	const minDate = useMemo(() => parseToDate(min), [min]);
@@ -112,11 +115,11 @@ export default function DateInput({
 						disabled={disabled}
 						accessibilityLabel="Выбрать дату"
 					>
-						<Calendar size={16} color={lightTheme.colors.labelColor} />
+						<Calendar size={16} color={theme.colors.labelColor} />
 					</Pressable>
 					{showClearButton && displayValue && !disabled ? (
 						<Pressable onPress={clear} style={styles.iconButton} accessibilityLabel="Очистить дату">
-							<X size={16} color={lightTheme.colors.labelColor} />
+							<X size={16} color={theme.colors.labelColor} />
 						</Pressable>
 					) : null}
 				</View>
@@ -165,66 +168,67 @@ export default function DateInput({
 	);
 }
 
-const styles = StyleSheet.create({
-	inputWrapper: {
-		minHeight: 48,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 12,
-		backgroundColor: lightTheme.colors.clearWhite,
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	errorBorder: {
-		borderColor: lightTheme.colors.error,
-	},
-	focusedBorder: {
-		borderColor: lightTheme.colors.accentColor,
-	},
-	valueArea: {
-		flex: 1,
-		paddingHorizontal: 14,
-		paddingVertical: 10,
-	},
-	valueText: {
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	placeholder: {
-		color: lightTheme.colors.labelColor,
-	},
-	actions: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingRight: 8,
-	},
-	iconButton: {
-		width: 28,
-		height: 28,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	modalBackdrop: {
-		flex: 1,
-		justifyContent: 'flex-end',
-		backgroundColor: 'rgba(0,0,0,0.3)',
-	},
-	modalCard: {
-		backgroundColor: lightTheme.colors.clearWhite,
-		paddingBottom: 20,
-	},
-	modalHeader: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		paddingHorizontal: 16,
-		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: lightTheme.colors.borderColor,
-	},
-	modalAction: {
-		color: lightTheme.colors.accentColor,
-		fontSize: 16,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		inputWrapper: {
+			minHeight: 48,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 12,
+			backgroundColor: theme.colors.clearWhite,
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		errorBorder: {
+			borderColor: theme.colors.error,
+		},
+		focusedBorder: {
+			borderColor: theme.colors.accentColor,
+		},
+		valueArea: {
+			flex: 1,
+			paddingHorizontal: 14,
+			paddingVertical: 10,
+		},
+		valueText: {
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		placeholder: {
+			color: theme.colors.labelColor,
+		},
+		actions: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingRight: 8,
+		},
+		iconButton: {
+			width: 28,
+			height: 28,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		modalBackdrop: {
+			flex: 1,
+			justifyContent: 'flex-end',
+			backgroundColor: 'rgba(0,0,0,0.3)',
+		},
+		modalCard: {
+			backgroundColor: theme.colors.clearWhite,
+			paddingBottom: 20,
+		},
+		modalHeader: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			paddingHorizontal: 16,
+			paddingVertical: 12,
+			borderBottomWidth: 1,
+			borderBottomColor: theme.colors.borderColor,
+		},
+		modalAction: {
+			color: theme.colors.accentColor,
+			fontSize: 16,
+			fontFamily: theme.typography.fontFamilyHeadings,
+		},
+	});

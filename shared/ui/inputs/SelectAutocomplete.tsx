@@ -12,8 +12,9 @@ import {
 
 import { ChevronDown, Search, X } from 'lucide-react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import ModalSlide from '@/shared/ui/ModalSlide';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { FormFieldShell } from './FormFieldShell';
 import type { SelectOption } from './types';
@@ -51,6 +52,8 @@ export function SelectAutocomplete({
 }: SelectAutocompleteProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [query, setQuery] = useState('');
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const selectedOption = useMemo(
 		() => options.find((option) => String(option.value) === String(value)),
@@ -98,10 +101,10 @@ export function SelectAutocomplete({
 								onClear?.();
 							}}
 						>
-							<X size={16} color={lightTheme.colors.labelColor} />
+							<X size={16} color={theme.colors.labelColor} />
 						</Pressable>
 					) : null}
-					<ChevronDown size={16} color={lightTheme.colors.labelColor} />
+					<ChevronDown size={16} color={theme.colors.labelColor} />
 				</View>
 			</Pressable>
 
@@ -109,17 +112,17 @@ export function SelectAutocomplete({
 				<View style={styles.header}>
 					<Text style={styles.headerTitle}>{label ?? 'Выбор'}</Text>
 					<Pressable onPress={handleClose}>
-						<X size={18} color={lightTheme.colors.labelColor} />
+						<X size={18} color={theme.colors.labelColor} />
 					</Pressable>
 				</View>
 
 				{searchable ? (
 					<View style={styles.searchWrapper}>
-						<Search size={16} color={lightTheme.colors.labelColor} />
+						<Search size={16} color={theme.colors.labelColor} />
 						<TextInput
 							style={styles.searchInput}
 							placeholder="Поиск"
-							placeholderTextColor={lightTheme.colors.labelColor}
+							placeholderTextColor={theme.colors.labelColor}
 							value={query}
 							onChangeText={setQuery}
 						/>
@@ -128,7 +131,7 @@ export function SelectAutocomplete({
 
 				{isLoading ? (
 					<View style={styles.stateBlock}>
-						<ActivityIndicator color={lightTheme.colors.accentColor} />
+						<ActivityIndicator color={theme.colors.accentColor} />
 					</View>
 				) : filteredOptions.length === 0 ? (
 					<View style={styles.stateBlock}>
@@ -156,93 +159,94 @@ export function SelectAutocomplete({
 	);
 }
 
-const styles = StyleSheet.create({
-	inputWrapper: {
-		minHeight: 48,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 12,
-		backgroundColor: lightTheme.colors.clearWhite,
-		paddingHorizontal: 14,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	errorBorder: {
-		borderColor: lightTheme.colors.error,
-	},
-	focusedBorder: {
-		borderColor: lightTheme.colors.accentColor,
-	},
-	disabled: {
-		opacity: 0.6,
-	},
-	valueText: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	placeholder: {
-		color: lightTheme.colors.labelColor,
-	},
-	controls: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 6,
-	},
-	iconButton: {
-		width: 24,
-		height: 24,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	modalCard: {
-		maxHeight: '80%',
-		gap: 12,
-	},
-	header: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	headerTitle: {
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-	},
-	searchWrapper: {
-		minHeight: 44,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 10,
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 10,
-		gap: 8,
-	},
-	searchInput: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	option: {
-		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: '#f0f0f0',
-	},
-	optionText: {
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	stateBlock: {
-		paddingVertical: 20,
-		alignItems: 'center',
-	},
-	stateText: {
-		color: lightTheme.colors.labelColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		inputWrapper: {
+			minHeight: 48,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 12,
+			backgroundColor: theme.colors.clearWhite,
+			paddingHorizontal: 14,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
+		errorBorder: {
+			borderColor: theme.colors.error,
+		},
+		focusedBorder: {
+			borderColor: theme.colors.accentColor,
+		},
+		disabled: {
+			opacity: 0.6,
+		},
+		valueText: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		placeholder: {
+			color: theme.colors.labelColor,
+		},
+		controls: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 6,
+		},
+		iconButton: {
+			width: 24,
+			height: 24,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		modalCard: {
+			maxHeight: '80%',
+			gap: 12,
+		},
+		header: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
+		headerTitle: {
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamilyHeadings,
+		},
+		searchWrapper: {
+			minHeight: 44,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 10,
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingHorizontal: 10,
+			gap: 8,
+		},
+		searchInput: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		option: {
+			paddingVertical: 12,
+			borderBottomWidth: 1,
+			borderBottomColor: theme.colors.borderColor,
+		},
+		optionText: {
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		stateBlock: {
+			paddingVertical: 20,
+			alignItems: 'center',
+		},
+		stateText: {
+			color: theme.colors.labelColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+	});

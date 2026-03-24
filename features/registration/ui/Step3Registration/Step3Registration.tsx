@@ -1,8 +1,12 @@
+import { useMemo } from 'react';
+
 import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { useFormContext } from 'react-hook-form';
 
+import { type AppTheme } from '@/shared/styles/tokens';
 import { RHFCheckbox, RHFFileInput, RHFInput, RHFSelectAutocomplete } from '@/shared/ui/inputs';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import type {
 	ICourseDTO,
@@ -28,6 +32,8 @@ export default function Step3Registration({
 	isCoursesLoading,
 }: IStep3RegistrationProps) {
 	const { control } = useFormContext<IRegistrationFormType>();
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const universityOptions = (universities ?? []).map((university) => ({
 		value: Number(university.id),
@@ -89,19 +95,24 @@ export default function Step3Registration({
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		gap: 12,
-	},
-	consentRow: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-	},
-	consentText: {
-		fontSize: 14,
-	},
-	link: {
-		fontSize: 14,
-		textDecorationLine: 'underline',
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		container: {
+			gap: 12,
+		},
+		consentRow: {
+			flexDirection: 'row',
+			flexWrap: 'wrap',
+		},
+		consentText: {
+			fontSize: 14,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		link: {
+			fontSize: 14,
+			textDecorationLine: 'underline',
+			color: theme.colors.accentColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+	});

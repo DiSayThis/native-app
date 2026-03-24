@@ -6,7 +6,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import type { ICategoryDTO } from '@/entities/partner/model/partner.dto';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { CategoryItem } from './CategoryItem';
 
@@ -21,6 +21,7 @@ export function CategoriesList({
 	selectedCategoryId,
 	onSelectCategory,
 }: CategoriesListProps) {
+	const { theme } = useTheme();
 	const scrollMetricsRef = useRef({
 		offsetX: 0,
 		viewportWidth: 0,
@@ -122,8 +123,8 @@ export function CategoriesList({
 					<Svg style={styles.edgeGradientSvg} width="100%" height="100%" preserveAspectRatio="none">
 						<Defs>
 							<LinearGradient id="categoriesFadeLeft" x1="0" y1="0" x2="1" y2="0">
-								<Stop offset="0" stopColor={lightTheme.colors.background} stopOpacity="1" />
-								<Stop offset="1" stopColor={lightTheme.colors.background} stopOpacity="0" />
+								<Stop offset="0" stopColor={theme.colors.background} stopOpacity="1" />
+								<Stop offset="1" stopColor={theme.colors.background} stopOpacity="0" />
 							</LinearGradient>
 						</Defs>
 						<Rect x="0" y="0" width="100%" height="100%" fill="url(#categoriesFadeLeft)" />
@@ -135,8 +136,8 @@ export function CategoriesList({
 					<Svg style={styles.edgeGradientSvg} width="100%" height="100%" preserveAspectRatio="none">
 						<Defs>
 							<LinearGradient id="categoriesFadeRight" x1="0" y1="0" x2="1" y2="0">
-								<Stop offset="0" stopColor={lightTheme.colors.background} stopOpacity="0" />
-								<Stop offset="1" stopColor={lightTheme.colors.background} stopOpacity="1" />
+								<Stop offset="0" stopColor={theme.colors.background} stopOpacity="0" />
+								<Stop offset="1" stopColor={theme.colors.background} stopOpacity="1" />
 							</LinearGradient>
 						</Defs>
 						<Rect x="0" y="0" width="100%" height="100%" fill="url(#categoriesFadeRight)" />

@@ -16,7 +16,8 @@ import { router } from 'expo-router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { getAxiosErrorMessage } from '@/shared/lib/get-axios-error-message';
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import {
 	useCheckEmailDomains,
@@ -38,6 +39,8 @@ export default function RegistrationForm() {
 	const [step, setStep] = useState(1);
 	const [successRegistered, setSuccessRegistered] = useState(false);
 	const [isValidating, setIsValidating] = useState(false);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const stepSchema = useMemo(() => {
 		if (step === 1) return step1Schema;
@@ -179,7 +182,7 @@ export default function RegistrationForm() {
 
 						{isCheckingEmailDomains || isRegistrationPending ? (
 							<View style={styles.loaderContainer}>
-								<ActivityIndicator color={lightTheme.colors.accentColor} />
+								<ActivityIndicator color={theme.colors.accentColor} />
 							</View>
 						) : null}
 					</View>
@@ -201,52 +204,53 @@ export default function RegistrationForm() {
 	);
 }
 
-const styles = StyleSheet.create({
-	scrollContent: {
-		flexGrow: 1,
-		padding: 16,
-		backgroundColor: lightTheme.colors.background,
-	},
-	form: {
-		width: '100%',
-		alignSelf: 'center',
-		padding: lightTheme.spacing.x2,
-		paddingTop: 0,
-		gap: 14,
-		backgroundColor: lightTheme.colors.bgWhite,
-	},
-	title: {
-		fontSize: lightTheme.typography.fontSizeHeading,
-		letterSpacing: lightTheme.typography.headingsLetterSpacing,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-	},
-	loaderContainer: {
-		alignItems: 'center',
-	},
-	backdrop: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: 24,
-		backgroundColor: 'rgba(0,0,0,0.4)',
-	},
-	modalCard: {
-		width: '100%',
-		maxWidth: 420,
-		borderRadius: 20,
-		padding: 20,
-		gap: 12,
-		backgroundColor: lightTheme.colors.bgWhite,
-	},
-	modalTitle: {
-		fontSize: 24,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-	},
-	modalText: {
-		fontSize: 14,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		scrollContent: {
+			flexGrow: 1,
+			padding: 16,
+			backgroundColor: theme.colors.background,
+		},
+		form: {
+			width: '100%',
+			alignSelf: 'center',
+			padding: theme.spacing.x2,
+			paddingTop: 0,
+			gap: 14,
+			backgroundColor: theme.colors.bgWhite,
+		},
+		title: {
+			fontSize: theme.typography.fontSizeHeading,
+			letterSpacing: theme.typography.headingsLetterSpacing,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamilyHeadings,
+		},
+		loaderContainer: {
+			alignItems: 'center',
+		},
+		backdrop: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+			padding: 24,
+			backgroundColor: 'rgba(0,0,0,0.4)',
+		},
+		modalCard: {
+			width: '100%',
+			maxWidth: 420,
+			borderRadius: 20,
+			padding: 20,
+			gap: 12,
+			backgroundColor: theme.colors.bgWhite,
+		},
+		modalTitle: {
+			fontSize: 24,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamilyHeadings,
+		},
+		modalText: {
+			fontSize: 14,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+	});

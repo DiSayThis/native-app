@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Modal, Pressable, type StyleProp, StyleSheet, type ViewStyle } from 'react-native';
 
@@ -10,7 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { lightTheme } from '../styles/tokens';
+import { type AppTheme } from '../styles/tokens';
+import { useTheme } from './theme/ThemeProvider';
 
 interface IModalSlideProps {
 	visible: boolean;
@@ -35,6 +36,8 @@ export default function ModalSlide({
 }: IModalSlideProps) {
 	const [isMounted, setIsMounted] = useState(visible);
 	const insets = useSafeAreaInsets();
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 	const overlayOpacity = useSharedValue(visible ? 1 : 0);
 	const contentTranslateY = useSharedValue(visible ? 0 : 28);
 	const contentOpacity = useSharedValue(visible ? 1 : 0);
@@ -129,16 +132,17 @@ export default function ModalSlide({
 	);
 }
 
-const styles = StyleSheet.create({
-	overlay: {
-		flex: 1,
-		justifyContent: 'flex-end',
-	},
-	content: {
-		padding: 16,
-		borderTopLeftRadius: 18,
-		borderTopRightRadius: 18,
-		backgroundColor: lightTheme.colors.bgWhite,
-		overflow: 'hidden',
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		overlay: {
+			flex: 1,
+			justifyContent: 'flex-end',
+		},
+		content: {
+			padding: 16,
+			borderTopLeftRadius: 18,
+			borderTopRightRadius: 18,
+			backgroundColor: theme.colors.bgWhite,
+			overflow: 'hidden',
+		},
+	});

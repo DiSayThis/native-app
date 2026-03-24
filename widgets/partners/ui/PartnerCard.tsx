@@ -19,7 +19,8 @@ import { usePartnerFavoriteToggle } from '@/features/favorites/hook/usePartnerFa
 import type { IPartnerCard } from '@/entities/partner/model/partner.dto';
 
 import { FILE_API } from '@/shared/api/urls';
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 const PARTNER_IMAGE_PLACEHOLDER = require('../../../shared/assets/placeholder.jpg');
 
@@ -36,6 +37,8 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCardProps) {
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const [hasImageError, setHasImageError] = useState(false);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 	const starScale = useSharedValue(1);
 	const starRotate = useSharedValue(0);
 	const enterDelay = Math.min(index * ENTER_STAGGER_STEP, ENTER_STAGGER_MAX_DELAY);
@@ -92,7 +95,7 @@ export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCar
 					<Animated.View style={animatedStarStyle}>
 						<Star
 							size={18}
-							color={isFavorite ? '#EAB308' : lightTheme.colors.clearWhite}
+							color={isFavorite ? '#EAB308' : '#fff'}
 							fill={isFavorite ? '#EAB308' : 'transparent'}
 						/>
 					</Animated.View>
@@ -136,96 +139,96 @@ export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCar
 	);
 });
 
-const styles = StyleSheet.create({
-	card: {
-		flex: 1,
-		position: 'relative',
-		borderRadius: 16,
-		// borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		backgroundColor: lightTheme.colors.clearWhite,
-		gap: 8,
-		shadowColor: '#000',
-		shadowOffset: {
-			width: 0,
-			height: 6,
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		card: {
+			flex: 1,
+			position: 'relative',
+			borderRadius: 16,
+			borderColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.clearWhite,
+			gap: 8,
+			shadowColor: '#000',
+			shadowOffset: {
+				width: 0,
+				height: 6,
+			},
+			shadowOpacity: 0.12,
+			shadowRadius: 8,
+			elevation: 3,
 		},
-		shadowOpacity: 0.12,
-		shadowRadius: 8,
-		elevation: 3,
-	},
-	favoriteButton: {
-		position: 'absolute',
-		top: 10,
-		right: 10,
-		width: 32,
-		height: 32,
-		borderRadius: 16,
-		backgroundColor: 'rgba(0, 0, 0, 0.28)',
-		alignItems: 'center',
-		justifyContent: 'center',
-		zIndex: 3,
-	},
-	imageContainer: {
-		position: 'relative',
-		width: '100%',
-		height: 132,
-		overflow: 'hidden',
-		borderTopLeftRadius: 12,
-		borderTopRightRadius: 12,
-	},
-	cardImage: {
-		...StyleSheet.absoluteFillObject,
-		backgroundColor: lightTheme.colors.borderColor,
-	},
-	networkImage: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-	},
-	networkImageHidden: {
-		opacity: 0,
-	},
-	cardInfoRow: {
-		paddingTop: 8,
-		padding: 14,
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		gap: 8,
-	},
-	fixedCard: {
-		borderColor: lightTheme.colors.accentColor,
-	},
-	discountBadge: {
-		flexShrink: 0,
-		paddingHorizontal: 10,
-		paddingVertical: 4,
-		borderRadius: 999,
-		backgroundColor: lightTheme.colors.accentColor,
-	},
-	discountText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		color: lightTheme.colors.accentTextColor,
-		fontSize: 14,
-		fontWeight: 700,
-	},
-	cardTitle: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 18,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-		flexShrink: 1,
-	},
-	cardContent: {
-		flex: 1,
-		minWidth: 0,
-		gap: 8,
-	},
-	cardSubtitle: {
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 14,
-		color: lightTheme.colors.textColor,
-		opacity: 0.9,
-		flexShrink: 1,
-	},
-});
+		favoriteButton: {
+			position: 'absolute',
+			top: 10,
+			right: 10,
+			width: 32,
+			height: 32,
+			borderRadius: 16,
+			backgroundColor: 'rgba(0, 0, 0, 0.28)',
+			alignItems: 'center',
+			justifyContent: 'center',
+			zIndex: 3,
+		},
+		imageContainer: {
+			position: 'relative',
+			width: '100%',
+			height: 132,
+			overflow: 'hidden',
+			borderTopLeftRadius: 12,
+			borderTopRightRadius: 12,
+		},
+		cardImage: {
+			...StyleSheet.absoluteFillObject,
+			backgroundColor: theme.colors.borderColor,
+		},
+		networkImage: {
+			position: 'absolute',
+			top: 0,
+			left: 0,
+		},
+		networkImageHidden: {
+			opacity: 0,
+		},
+		cardInfoRow: {
+			paddingTop: 8,
+			padding: 14,
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			gap: 8,
+		},
+		fixedCard: {
+			borderColor: theme.colors.accentColor,
+		},
+		discountBadge: {
+			flexShrink: 0,
+			paddingHorizontal: 10,
+			paddingVertical: 4,
+			borderRadius: 999,
+			backgroundColor: theme.colors.accentColor,
+		},
+		discountText: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			color: theme.colors.accentTextColor,
+			fontSize: 14,
+			fontWeight: 700,
+		},
+		cardTitle: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 18,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+			flexShrink: 1,
+		},
+		cardContent: {
+			flex: 1,
+			minWidth: 0,
+			gap: 8,
+		},
+		cardSubtitle: {
+			fontFamily: theme.typography.fontFamily,
+			fontSize: 14,
+			color: theme.colors.textColor,
+			opacity: 0.9,
+			flexShrink: 1,
+		},
+	});

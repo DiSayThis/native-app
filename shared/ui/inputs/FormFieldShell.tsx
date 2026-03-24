@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
+
 import { StyleSheet, Text, View } from 'react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 interface IFormFieldShellProps {
 	label?: string;
@@ -9,6 +12,9 @@ interface IFormFieldShellProps {
 }
 
 export function FormFieldShell({ label, errorText, children }: IFormFieldShellProps) {
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
+
 	return (
 		<View style={styles.wrapper}>
 			{label ? <Text style={styles.label}>{label}</Text> : null}
@@ -18,18 +24,19 @@ export function FormFieldShell({ label, errorText, children }: IFormFieldShellPr
 	);
 }
 
-const styles = StyleSheet.create({
-	wrapper: {
-		gap: 6,
-	},
-	label: {
-		fontSize: 14,
-		color: lightTheme.colors.labelColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	error: {
-		fontSize: 14,
-		color: lightTheme.colors.error,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		wrapper: {
+			gap: 6,
+		},
+		label: {
+			fontSize: 14,
+			color: theme.colors.labelColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		error: {
+			fontSize: 14,
+			color: theme.colors.error,
+			fontFamily: theme.typography.fontFamily,
+		},
+	});

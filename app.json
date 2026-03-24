@@ -6,7 +6,6 @@
 		"orientation": "portrait",
 		"icon": "./shared/assets/icon.png",
 		"userInterfaceStyle": "light",
-		"newArchEnabled": true,
 		"splash": {
 			"image": "./shared/assets/splash-icon.png",
 			"resizeMode": "contain",
@@ -20,7 +19,6 @@
 				"foregroundImage": "./shared/assets/adaptive-icon.png",
 				"backgroundColor": "#f8f8f8"
 			},
-			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false
 		},
 		"web": {

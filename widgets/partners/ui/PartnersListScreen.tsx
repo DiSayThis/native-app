@@ -18,7 +18,8 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import type { ICategoryDTO, IPartnerCard } from '@/entities/partner/model/partner.dto';
 
 import { useDebouncedValue } from '@/shared/lib/use-debounced-value';
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { CategoriesList } from './CategoriesList';
 import { warmCategoryIcon } from './category-icon-cache';
@@ -51,6 +52,8 @@ type PartnersListScreenProps = {
 export function PartnersListScreen({ data, hideCategories = false }: PartnersListScreenProps) {
 	const listRef = useRef<FlatList<IPartnerCard>>(null);
 	useScrollToTop(listRef);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -106,7 +109,7 @@ export function PartnersListScreen({ data, hideCategories = false }: PartnersLis
 	if (data.isLoading) {
 		return (
 			<View style={styles.centerState}>
-				<ActivityIndicator color={lightTheme.colors.accentColor} />
+				<ActivityIndicator color={theme.colors.accentColor} />
 			</View>
 		);
 	}
@@ -133,9 +136,9 @@ export function PartnersListScreen({ data, hideCategories = false }: PartnersLis
 				>
 					<Defs>
 						<LinearGradient id="partnersTitleGradient" x1="0" y1="0" x2="0" y2="1">
-							<Stop offset="0" stopColor={lightTheme.colors.background} stopOpacity="1" />
-							<Stop offset="0.4" stopColor={lightTheme.colors.background} stopOpacity="1" />
-							<Stop offset="1" stopColor={lightTheme.colors.background} stopOpacity="0" />
+							<Stop offset="0" stopColor={theme.colors.background} stopOpacity="1" />
+							<Stop offset="0.4" stopColor={theme.colors.background} stopOpacity="1" />
+							<Stop offset="1" stopColor={theme.colors.background} stopOpacity="0" />
 						</LinearGradient>
 					</Defs>
 					<Rect x="0" y="0" width="100%" height="100%" fill="url(#partnersTitleGradient)" />
@@ -162,12 +165,12 @@ export function PartnersListScreen({ data, hideCategories = false }: PartnersLis
 				ListHeaderComponent={
 					<View style={styles.header}>
 						<View style={styles.searchWrapper}>
-							<Search size={16} color={lightTheme.colors.labelColor} />
+							<Search size={16} color={theme.colors.labelColor} />
 							<TextInput
 								value={searchQuery}
 								onChangeText={setSearchQuery}
 								placeholder={data.searchPlaceholder}
-								placeholderTextColor={lightTheme.colors.labelColor}
+								placeholderTextColor={theme.colors.labelColor}
 								style={styles.searchInput}
 							/>
 						</View>
@@ -187,90 +190,91 @@ export function PartnersListScreen({ data, hideCategories = false }: PartnersLis
 	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: lightTheme.colors.background,
-	},
-	listContent: {
-		paddingHorizontal: lightTheme.spacing.x4,
-		paddingTop: FIXED_TITLE_HEIGHT + lightTheme.spacing.x4,
-		paddingBottom: 120,
-		gap: 14,
-	},
-	header: {
-		gap: 12,
-		marginBottom: 8,
-	},
-	fixedTitleContainer: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		height: FIXED_TITLE_GRADIENT_HEIGHT,
-		zIndex: 10,
-	},
-	fixedTitleGradient: {
-		...StyleSheet.absoluteFillObject,
-	},
-	fixedTitleContent: {
-		height: FIXED_TITLE_HEIGHT,
-		paddingHorizontal: lightTheme.spacing.x4,
-		justifyContent: 'center',
-	},
-	centerState: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: lightTheme.spacing.x4,
-	},
-	title: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: lightTheme.typography.fontSizeHeading,
-		color: lightTheme.colors.textColor,
-		textAlign: 'center',
-	},
-	titleCentered: {
-		textAlign: 'center',
-	},
-	searchWrapper: {
-		height: 46,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 12,
-		backgroundColor: lightTheme.colors.clearWhite,
-		paddingHorizontal: 12,
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 8,
-	},
-	searchInput: {
-		flex: 1,
-		fontSize: 16,
-		fontFamily: lightTheme.typography.fontFamily,
-		color: lightTheme.colors.textColor,
-	},
-	emptyText: {
-		textAlign: 'center',
-		fontFamily: lightTheme.typography.fontFamily,
-		color: lightTheme.colors.labelColor,
-		paddingTop: 40,
-	},
-	errorText: {
-		fontFamily: lightTheme.typography.fontFamily,
-		color: lightTheme.colors.error,
-		marginBottom: 10,
-	},
-	retryButton: {
-		height: 40,
-		paddingHorizontal: 16,
-		borderRadius: 10,
-		backgroundColor: lightTheme.colors.accentColor,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	retryText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		color: lightTheme.colors.accentTextColor,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			backgroundColor: theme.colors.background,
+		},
+		listContent: {
+			paddingHorizontal: theme.spacing.x4,
+			paddingTop: FIXED_TITLE_HEIGHT + theme.spacing.x4,
+			paddingBottom: 120,
+			gap: 14,
+		},
+		header: {
+			gap: 12,
+			marginBottom: 8,
+		},
+		fixedTitleContainer: {
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			right: 0,
+			height: FIXED_TITLE_GRADIENT_HEIGHT,
+			zIndex: 10,
+		},
+		fixedTitleGradient: {
+			...StyleSheet.absoluteFillObject,
+		},
+		fixedTitleContent: {
+			height: FIXED_TITLE_HEIGHT,
+			paddingHorizontal: theme.spacing.x4,
+			justifyContent: 'center',
+		},
+		centerState: {
+			flex: 1,
+			alignItems: 'center',
+			justifyContent: 'center',
+			padding: theme.spacing.x4,
+		},
+		title: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: theme.typography.fontSizeHeading,
+			color: theme.colors.textColor,
+			textAlign: 'center',
+		},
+		titleCentered: {
+			textAlign: 'center',
+		},
+		searchWrapper: {
+			height: 46,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 12,
+			backgroundColor: theme.colors.clearWhite,
+			paddingHorizontal: 12,
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 8,
+		},
+		searchInput: {
+			flex: 1,
+			fontSize: 16,
+			fontFamily: theme.typography.fontFamily,
+			color: theme.colors.textColor,
+		},
+		emptyText: {
+			textAlign: 'center',
+			fontFamily: theme.typography.fontFamily,
+			color: theme.colors.labelColor,
+			paddingTop: 40,
+		},
+		errorText: {
+			fontFamily: theme.typography.fontFamily,
+			color: theme.colors.error,
+			marginBottom: 10,
+		},
+		retryButton: {
+			height: 40,
+			paddingHorizontal: 16,
+			borderRadius: 10,
+			backgroundColor: theme.colors.accentColor,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		retryText: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			color: theme.colors.accentTextColor,
+		},
+	});

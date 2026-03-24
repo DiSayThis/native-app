@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -6,9 +6,10 @@ import type { IDiscountDTO } from '@/entities/partner/model/partner.dto';
 import { DiscountPromocodeModal } from '@/entities/partner/ui/DiscountPromocodeModal';
 
 import { formatDiscountSize } from '@/shared/lib/partner-offer-utils';
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
 import MarkdownText from '@/shared/ui/MarkdownText';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 type DiscountCardProps = {
 	discount: IDiscountDTO;
@@ -16,6 +17,8 @@ type DiscountCardProps = {
 };
 
 export function DiscountCard({ discount, studentId }: DiscountCardProps) {
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 	const [isPromocodeModalVisible, setIsPromocodeModalVisible] = useState(false);
 	const title = discount.name?.trim() || 'Без названия';
 	const sizeLabel = formatDiscountSize(discount.size);
@@ -50,38 +53,39 @@ export function DiscountCard({ discount, studentId }: DiscountCardProps) {
 	);
 }
 
-const styles = StyleSheet.create({
-	discountCard: {
-		borderRadius: 14,
-		padding: 14,
-		backgroundColor: lightTheme.colors.clearWhite,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		gap: 10,
-	},
-	discountHeader: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		justifyContent: 'space-between',
-		gap: 8,
-	},
-	discountTitle: {
-		flex: 1,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 20,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-	},
-	discountBadge: {
-		paddingHorizontal: 10,
-		paddingVertical: 4,
-		borderRadius: 999,
-		backgroundColor: lightTheme.colors.accentColor,
-	},
-	discountBadgeText: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 14,
-		fontWeight: 700,
-		color: lightTheme.colors.accentTextColor,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		discountCard: {
+			borderRadius: 14,
+			padding: 14,
+			backgroundColor: theme.colors.clearWhite,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			gap: 10,
+		},
+		discountHeader: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			justifyContent: 'space-between',
+			gap: 8,
+		},
+		discountTitle: {
+			flex: 1,
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 20,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+		},
+		discountBadge: {
+			paddingHorizontal: 10,
+			paddingVertical: 4,
+			borderRadius: 999,
+			backgroundColor: theme.colors.accentColor,
+		},
+		discountBadgeText: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 14,
+			fontWeight: 700,
+			color: theme.colors.accentTextColor,
+		},
+	});

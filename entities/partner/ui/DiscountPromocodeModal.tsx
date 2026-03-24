@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -9,10 +9,11 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import { useDiscountPromocode } from '@/entities/partner/hook/useDiscountPromocode';
 import type { IDiscountDTO } from '@/entities/partner/model/partner.dto';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
 import MarkdownText from '@/shared/ui/MarkdownText';
 import ModalSlide from '@/shared/ui/ModalSlide';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 type DiscountPromocodeModalProps = {
 	visible: boolean;
@@ -27,6 +28,8 @@ export function DiscountPromocodeModal({
 	studentId,
 	onClose,
 }: DiscountPromocodeModalProps) {
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 	const [isPromocodeCopied, setIsPromocodeCopied] = useState(false);
 	const copiedOpacity = useSharedValue(0);
 	const copiedTranslateY = useSharedValue(6);
@@ -105,7 +108,7 @@ export function DiscountPromocodeModal({
 				<View style={styles.promocodeTextBlock}>
 					<Text style={styles.promocodeLabel}>Промокод</Text>
 					{isPromocodeLoading ? (
-						<ActivityIndicator color={lightTheme.colors.accentColor} />
+						<ActivityIndicator color={theme.colors.accentColor} />
 					) : (
 						<Text style={styles.promocodeValue}>{promocode || 'Не удалось получить промокод'}</Text>
 					)}
@@ -117,7 +120,7 @@ export function DiscountPromocodeModal({
 						!promocode || isPromocodeLoading ? styles.promocodeCopyIconDisabled : null,
 					]}
 				>
-					<Copy size={18} color={lightTheme.colors.textColor} />
+					<Copy size={18} color={theme.colors.textColor} />
 				</View>
 			</Pressable>
 
@@ -130,67 +133,68 @@ export function DiscountPromocodeModal({
 	);
 }
 
-const styles = StyleSheet.create({
-	modalCard: {
-		maxHeight: '85%',
-		gap: 12,
-	},
-	modalTitle: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 22,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-	},
-	modalDescriptionScroll: {
-		flexGrow: 0,
-	},
-	modalDescriptionContent: {
-		paddingBottom: 4,
-	},
-	promocodeCard: {
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		backgroundColor: lightTheme.colors.clearWhite,
-		borderRadius: 14,
-		padding: 12,
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 10,
-	},
-	promocodeTextBlock: {
-		flex: 1,
-		gap: 6,
-	},
-	promocodeLabel: {
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 13,
-		color: lightTheme.colors.labelColor,
-	},
-	promocodeValue: {
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		fontSize: 18,
-		fontWeight: 700,
-		color: lightTheme.colors.textColor,
-	},
-	copiedPromocodeValue: {
-		borderColor: lightTheme.colors.success,
-	},
-	promocodeCopyIcon: {
-		width: 36,
-		height: 36,
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		backgroundColor: lightTheme.colors.bgSecondary,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	promocodeCopyIconDisabled: {
-		opacity: 0.4,
-	},
-	promocodeCopiedText: {
-		fontFamily: lightTheme.typography.fontFamily,
-		fontSize: 14,
-		color: lightTheme.colors.success,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		modalCard: {
+			maxHeight: '85%',
+			gap: 12,
+		},
+		modalTitle: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 22,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+		},
+		modalDescriptionScroll: {
+			flexGrow: 0,
+		},
+		modalDescriptionContent: {
+			paddingBottom: 4,
+		},
+		promocodeCard: {
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.clearWhite,
+			borderRadius: 14,
+			padding: 12,
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 10,
+		},
+		promocodeTextBlock: {
+			flex: 1,
+			gap: 6,
+		},
+		promocodeLabel: {
+			fontFamily: theme.typography.fontFamily,
+			fontSize: 13,
+			color: theme.colors.labelColor,
+		},
+		promocodeValue: {
+			fontFamily: theme.typography.fontFamilyHeadings,
+			fontSize: 18,
+			fontWeight: 700,
+			color: theme.colors.textColor,
+		},
+		copiedPromocodeValue: {
+			borderColor: theme.colors.success,
+		},
+		promocodeCopyIcon: {
+			width: 36,
+			height: 36,
+			borderRadius: 10,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.bgSecondary,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		promocodeCopyIconDisabled: {
+			opacity: 0.4,
+		},
+		promocodeCopiedText: {
+			fontFamily: theme.typography.fontFamily,
+			fontSize: 14,
+			color: theme.colors.success,
+		},
+	});

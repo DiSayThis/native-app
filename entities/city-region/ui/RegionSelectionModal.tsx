@@ -13,8 +13,9 @@ import {
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Check, Search, X } from 'lucide-react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
 import ModalSlide from '@/shared/ui/ModalSlide';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { useCityRegionQuery } from '../hook/useCityRegionQuery';
 import { cityRegionAtom, clearCityRegionAtom, setCityRegionAtom } from '../model/city-region.store';
@@ -26,6 +27,8 @@ interface IRegionSelectionModalProps {
 
 export default function RegionSelectionModal({ visible, onClose }: IRegionSelectionModalProps) {
 	const [regionSearch, setRegionSearch] = useState('');
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	const { regionId } = useAtomValue(cityRegionAtom);
 	const setRegion = useSetAtom(setCityRegionAtom);
@@ -79,24 +82,24 @@ export default function RegionSelectionModal({ visible, onClose }: IRegionSelect
 			<View style={styles.modalHeader}>
 				<Text style={styles.modalTitle}>Выберите регион</Text>
 				<Pressable onPress={handleClose} style={styles.iconButton}>
-					<X size={18} color={lightTheme.colors.labelColor} />
+					<X size={18} color={theme.colors.labelColor} />
 				</Pressable>
 			</View>
 
 			<View style={styles.searchWrapper}>
-				<Search size={16} color={lightTheme.colors.labelColor} />
+				<Search size={16} color={theme.colors.labelColor} />
 				<TextInput
 					value={regionSearch}
 					onChangeText={setRegionSearch}
 					placeholder="Поиск региона"
-					placeholderTextColor={lightTheme.colors.labelColor}
+					placeholderTextColor={theme.colors.labelColor}
 					style={styles.searchInput}
 				/>
 			</View>
 
 			{isLoadingRegions ? (
 				<View style={styles.modalStateBlock}>
-					<ActivityIndicator color={lightTheme.colors.accentColor} />
+					<ActivityIndicator color={theme.colors.accentColor} />
 				</View>
 			) : (
 				<FlatList
@@ -106,7 +109,7 @@ export default function RegionSelectionModal({ visible, onClose }: IRegionSelect
 					ListHeaderComponent={
 						<Pressable style={styles.optionRow} onPress={handleSelectAllRegions}>
 							<Text style={styles.optionLabel}>Все регионы</Text>
-							{!regionId ? <Check size={16} color={lightTheme.colors.accentColor} /> : null}
+							{!regionId ? <Check size={16} color={theme.colors.accentColor} /> : null}
 						</Pressable>
 					}
 					ListEmptyComponent={
@@ -123,7 +126,7 @@ export default function RegionSelectionModal({ visible, onClose }: IRegionSelect
 								onPress={() => handleSelectRegion(String(item.id), item.name)}
 							>
 								<Text style={styles.optionLabel}>{item.name}</Text>
-								{isSelected ? <Check size={16} color={lightTheme.colors.accentColor} /> : null}
+								{isSelected ? <Check size={16} color={theme.colors.accentColor} /> : null}
 							</Pressable>
 						);
 					}}
@@ -133,65 +136,66 @@ export default function RegionSelectionModal({ visible, onClose }: IRegionSelect
 	);
 }
 
-const styles = StyleSheet.create({
-	modalCard: {
-		maxHeight: '80%',
-		gap: 12,
-	},
-	modalHeader: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	modalTitle: {
-		fontSize: 17,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-	},
-	iconButton: {
-		width: 28,
-		height: 28,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	searchWrapper: {
-		minHeight: 44,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 10,
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 10,
-		gap: 8,
-	},
-	searchInput: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-	},
-	modalStateBlock: {
-		paddingVertical: 20,
-		alignItems: 'center',
-	},
-	modalStateText: {
-		fontFamily: lightTheme.typography.fontFamily,
-		color: lightTheme.colors.labelColor,
-	},
-	optionRow: {
-		minHeight: 48,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: '#f1f1f1',
-	},
-	optionLabel: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-		paddingRight: 10,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		modalCard: {
+			maxHeight: '80%',
+			gap: 12,
+		},
+		modalHeader: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
+		modalTitle: {
+			fontSize: 17,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamilyHeadings,
+		},
+		iconButton: {
+			width: 28,
+			height: 28,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		searchWrapper: {
+			minHeight: 44,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 10,
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingHorizontal: 10,
+			gap: 8,
+		},
+		searchInput: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+		},
+		modalStateBlock: {
+			paddingVertical: 20,
+			alignItems: 'center',
+		},
+		modalStateText: {
+			fontFamily: theme.typography.fontFamily,
+			color: theme.colors.labelColor,
+		},
+		optionRow: {
+			minHeight: 48,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			paddingVertical: 12,
+			borderBottomWidth: 1,
+			borderBottomColor: theme.colors.borderColor,
+		},
+		optionLabel: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+			paddingRight: 10,
+		},
+	});

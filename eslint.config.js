@@ -47,7 +47,7 @@ module.exports = defineConfig([
 
 			/* ---------------- React Native ---------------- */
 			'react-native/no-inline-styles': 'warn',
-			'react-native/no-unused-styles': 'warn',
+			'react-native/no-unused-styles': 'off',
 			'react-native/split-platform-components': 'warn',
 
 			/* ---------------- Imports ---------------- */

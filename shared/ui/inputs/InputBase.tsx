@@ -11,7 +11,8 @@ import {
 
 import { Eye, EyeOff, X } from 'lucide-react-native';
 
-import { lightTheme } from '@/shared/styles/tokens';
+import { type AppTheme } from '@/shared/styles/tokens';
+import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import { FormFieldShell } from './FormFieldShell';
 
@@ -56,6 +57,8 @@ export default function InputBase({
 }: IInputBaseProps) {
 	const [showPassword, setShowPassword] = useState(togglePassword);
 	const [isFocused, setIsFocused] = useState(false);
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	useEffect(() => {
 		setShowPassword(togglePassword);
@@ -107,6 +110,7 @@ export default function InputBase({
 					keyboardType={keyboardType}
 					autoCapitalize={type === 'email' || type === 'password' ? 'none' : rest.autoCapitalize}
 					autoCorrect={false}
+					placeholderTextColor={rest.placeholderTextColor ?? theme.colors.labelColor}
 					secureTextEntry={secureTextEntry}
 					editable={isEditable}
 					multiline={multiline}
@@ -123,9 +127,7 @@ export default function InputBase({
 				/>
 
 				<View style={styles.controls}>
-					{isLoading ? (
-						<ActivityIndicator size="small" color={lightTheme.colors.accentColor} />
-					) : null}
+					{isLoading ? <ActivityIndicator size="small" color={theme.colors.accentColor} /> : null}
 
 					{hasClear ? (
 						<Pressable
@@ -133,7 +135,7 @@ export default function InputBase({
 							style={styles.iconButton}
 							accessibilityLabel="Очистить"
 						>
-							<X size={24} color={lightTheme.colors.labelColor} />
+							<X size={24} color={theme.colors.labelColor} />
 						</Pressable>
 					) : null}
 
@@ -147,9 +149,9 @@ export default function InputBase({
 							accessibilityLabel={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
 						>
 							{showPassword ? (
-								<Eye size={24} color={lightTheme.colors.labelColor} />
+								<Eye size={24} color={theme.colors.labelColor} />
 							) : (
-								<EyeOff size={24} color={lightTheme.colors.labelColor} />
+								<EyeOff size={24} color={theme.colors.labelColor} />
 							)}
 						</Pressable>
 					) : null}
@@ -159,45 +161,46 @@ export default function InputBase({
 	);
 }
 
-const styles = StyleSheet.create({
-	inputWrapper: {
-		minHeight: 48,
-		borderWidth: 1,
-		borderColor: lightTheme.colors.borderColor,
-		borderRadius: 12,
-		flexDirection: 'row',
-		alignItems: 'center',
-		backgroundColor: lightTheme.colors.clearWhite,
-	},
-	errorBorder: {
-		borderColor: lightTheme.colors.error,
-	},
-	focusedBorder: {
-		borderColor: lightTheme.colors.accentColor,
-	},
-	input: {
-		flex: 1,
-		fontSize: 16,
-		color: lightTheme.colors.textColor,
-		fontFamily: lightTheme.typography.fontFamily,
-		paddingHorizontal: 14,
-		paddingVertical: 10,
-	},
-	withControls: {
-		paddingRight: 8,
-	},
-	multiline: {
-		minHeight: 88,
-	},
-	controls: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingRight: 8,
-	},
-	iconButton: {
-		width: 28,
-		height: 28,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		inputWrapper: {
+			minHeight: 48,
+			borderWidth: 1,
+			borderColor: theme.colors.borderColor,
+			borderRadius: 12,
+			flexDirection: 'row',
+			alignItems: 'center',
+			backgroundColor: theme.colors.clearWhite,
+		},
+		errorBorder: {
+			borderColor: theme.colors.error,
+		},
+		focusedBorder: {
+			borderColor: theme.colors.accentColor,
+		},
+		input: {
+			flex: 1,
+			fontSize: 16,
+			color: theme.colors.textColor,
+			fontFamily: theme.typography.fontFamily,
+			paddingHorizontal: 14,
+			paddingVertical: 10,
+		},
+		withControls: {
+			paddingRight: 8,
+		},
+		multiline: {
+			minHeight: 88,
+		},
+		controls: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingRight: 8,
+		},
+		iconButton: {
+			width: 28,
+			height: 28,
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+	});

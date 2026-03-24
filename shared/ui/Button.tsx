@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import {
 	Animated,
@@ -8,7 +8,8 @@ import {
 	StyleSheet,
 } from 'react-native';
 
-import { lightTheme } from '../styles/tokens';
+import { type AppTheme } from '../styles/tokens';
+import { useTheme } from './theme/ThemeProvider';
 
 type ButtonVariant = 'primary' | 'secondary' | 'white';
 
@@ -18,33 +19,36 @@ interface IButtonProps extends PressableProps {
 	variant?: ButtonVariant;
 }
 
-const variantColors = {
-	primary: {
-		background: lightTheme.colors.accentColor,
-		backgroundHover: lightTheme.colors.accentHoverColor,
-		text: lightTheme.colors.accentTextColor,
-		textHover: lightTheme.colors.accentHoverTextColor,
-		borderColor: 'transparent',
-	},
-	secondary: {
-		background: lightTheme.colors.bgWhite,
-		backgroundHover: lightTheme.colors.hoverBgSecondary,
-		text: lightTheme.colors.textColor,
-		textHover: lightTheme.colors.textColor,
-		borderColor: lightTheme.colors.borderColor,
-	},
-	white: {
-		background: lightTheme.colors.clearWhite,
-		backgroundHover: lightTheme.colors.hoverBgSecondary,
-		text: lightTheme.colors.textColor,
-		textHover: lightTheme.colors.textColor,
-		borderColor: lightTheme.colors.borderColor,
-	},
-} as const;
+const variantColors = (theme: AppTheme) =>
+	({
+		primary: {
+			background: theme.colors.accentColor,
+			backgroundHover: theme.colors.accentHoverColor,
+			text: theme.colors.accentTextColor,
+			textHover: theme.colors.accentHoverTextColor,
+			borderColor: 'transparent',
+		},
+		secondary: {
+			background: theme.colors.bgWhite,
+			backgroundHover: theme.colors.hoverBgSecondary,
+			text: theme.colors.textColor,
+			textHover: theme.colors.textColor,
+			borderColor: theme.colors.borderColor,
+		},
+		white: {
+			background: theme.colors.clearWhite,
+			backgroundHover: theme.colors.hoverBgSecondary,
+			text: theme.colors.textColor,
+			textHover: theme.colors.textColor,
+			borderColor: theme.colors.borderColor,
+		},
+	}) as const;
 
 export default function Button({ title, children, variant = 'primary', ...rest }: IButtonProps) {
 	const animatedValue = useRef(new Animated.Value(100)).current;
-	const colors = variantColors[variant];
+	const { theme } = useTheme();
+	const styles = useMemo(() => createStyles(theme), [theme]);
+	const colors = variantColors(theme)[variant];
 	const backgroundColorInterpolation = animatedValue.interpolate({
 		inputRange: [0, 100],
 		outputRange: [colors.backgroundHover, colors.background],
@@ -88,18 +92,19 @@ export default function Button({ title, children, variant = 'primary', ...rest }
 	);
 }
 
-const styles = StyleSheet.create({
-	button: {
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderRadius: lightTheme.radius,
-		height: 58,
-		borderWidth: 1,
-	},
-	text: {
-		fontSize: lightTheme.typography.fontSizeButtons,
-		fontWeight: 700,
-		fontFamily: lightTheme.typography.fontFamilyHeadings,
-		paddingHorizontal: lightTheme.spacing.x2,
-	},
-});
+const createStyles = (theme: AppTheme) =>
+	StyleSheet.create({
+		button: {
+			justifyContent: 'center',
+			alignItems: 'center',
+			borderRadius: theme.radius,
+			height: 58,
+			borderWidth: 1,
+		},
+		text: {
+			fontSize: theme.typography.fontSizeButtons,
+			fontWeight: 700,
+			fontFamily: theme.typography.fontFamilyHeadings,
+			paddingHorizontal: theme.spacing.x2,
+		},
+	});
