@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppFonts } from '@/shared/lib/use-app-fonts';
@@ -45,6 +46,10 @@ const styles = StyleSheet.create({
 function RootNavigator() {
 	const insets = useSafeAreaInsets();
 	const { theme, scheme } = useTheme();
+
+	useEffect(() => {
+		void SystemUI.setBackgroundColorAsync(theme.colors.background);
+	}, [theme.colors.background]);
 
 	return (
 		<>

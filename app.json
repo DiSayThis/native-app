@@ -1,23 +1,22 @@
 {
 	"expo": {
-		"name": "studmart-native-app",
+		"name": "Studmart",
 		"slug": "studmart-native-app",
 		"version": "1.0.0",
 		"orientation": "portrait",
-		"icon": "./shared/assets/icon.png",
-		"userInterfaceStyle": "light",
+		"icon": "./shared/assets/image/icon-1024.png",
+		"userInterfaceStyle": "automatic",
 		"splash": {
-			"image": "./shared/assets/splash-icon.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#f8f8f8"
+			"image": "./shared/assets/image/splash-screen-portrait.png",
+			"resizeMode": "cover"
 		},
 		"ios": {
 			"supportsTablet": true
 		},
 		"android": {
 			"adaptiveIcon": {
-				"foregroundImage": "./shared/assets/adaptive-icon.png",
-				"backgroundColor": "#f8f8f8"
+				"foregroundImage": "./shared/assets/image/adaptive-icon-foreground.png",
+				"monochromeImage": "./shared/assets/image/adaptive-icon-monochrome.png"
 			},
 			"predictiveBackGestureEnabled": false
 		},

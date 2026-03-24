@@ -227,6 +227,7 @@ const createStyles = (theme: AppTheme) =>
 			alignItems: 'center',
 			justifyContent: 'center',
 			padding: theme.spacing.x4,
+			backgroundColor: theme.colors.background,
 		},
 		title: {
 			fontFamily: theme.typography.fontFamilyHeadings,
