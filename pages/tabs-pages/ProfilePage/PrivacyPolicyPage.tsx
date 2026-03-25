@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { StyleSheet, Text } from 'react-native';
 
 import { type AppTheme } from '@/shared/styles/tokens';
@@ -10,7 +11,10 @@ export default function PrivacyPolicyPage() {
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	return (
-		<GradientBackHeaderLayout title="Политика конфиденциальности">
+		<GradientBackHeaderLayout
+			title="Политика 
+		конфиденциальности"
+		>
 			<Text style={styles.subtitle}>Страница политики конфиденциальности</Text>
 		</GradientBackHeaderLayout>
 	);
