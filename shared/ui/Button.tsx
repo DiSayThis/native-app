@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { type AppTheme } from '../styles/tokens';
+
 import { useTheme } from './theme/ThemeProvider';
 
 type ButtonVariant = 'primary' | 'secondary' | 'white';

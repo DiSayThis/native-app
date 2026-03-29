@@ -11,6 +11,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { type AppTheme } from '../styles/tokens';
+
 import { useTheme } from './theme/ThemeProvider';
 
 interface IModalSlideProps {

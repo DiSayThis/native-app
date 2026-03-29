@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Appearance } from 'react-native';
+
 import { useAtomValue, useSetAtom } from 'jotai';
 
 import type { AppTheme } from '../../styles/tokens';
