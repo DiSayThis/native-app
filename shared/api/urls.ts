@@ -5,3 +5,4 @@ export const PROMOCODE_API = `https://promocodes.${API_BASE_URL}`;
 export const PARTNER_API = `https://partner.${API_BASE_URL}`;
 export const AUTH_API = `https://auth.${API_BASE_URL}`;
 export const FILE_API = `https://files.${API_BASE_URL}`;
+export const SUPPORT_EMAIL_API = `https://email.${API_BASE_URL}`;

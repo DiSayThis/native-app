@@ -13,3 +13,17 @@ export const userAtom = atom<IUserStore>({
 	isLoading: false,
 	error: null,
 });
+
+export const userAvatarVersionAtom = atom<Record<string, number>>({});
+
+export const bumpUserAvatarVersionAtom = atom(
+	null,
+	(get, set, studentId: string | null | undefined) => {
+		if (!studentId) return;
+
+		set(userAvatarVersionAtom, {
+			...get(userAvatarVersionAtom),
+			[studentId]: Date.now(),
+		});
+	},
+);

@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
+import { useAtomValue } from 'jotai';
+
+import { userAvatarVersionAtom } from '@/entities/user/model/user.store';
+
 import { FILE_API } from '@/shared/api/urls';
 import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
@@ -25,12 +29,14 @@ export function UserProfileBlock({
 	onRetry,
 }: UserProfileBlockProps) {
 	const [hasAvatarError, setHasAvatarError] = useState(false);
+	const avatarVersions = useAtomValue(userAvatarVersionAtom);
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
+	const avatarVersion = avatarVersions[studentId] ?? 0;
 
 	useEffect(() => {
 		setHasAvatarError(false);
-	}, [studentId]);
+	}, [studentId, avatarVersion]);
 
 	const fullName = useMemo(() => {
 		const rawName = [firstName, lastName].filter(Boolean).join(' ').trim();
@@ -43,7 +49,7 @@ export function UserProfileBlock({
 		return computed || 'U';
 	}, [firstName, lastName]);
 
-	const avatarUri = `${FILE_API}/Avatars/${studentId}`;
+	const avatarUri = `${FILE_API}/Avatars/${studentId}?t=${avatarVersion}`;
 	const showAvatarImage = !hasAvatarError;
 
 	return (

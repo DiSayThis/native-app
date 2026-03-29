@@ -5,7 +5,7 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'rea
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import * as DocumentPicker from 'expo-document-picker';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { Camera } from 'lucide-react-native';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -16,6 +16,7 @@ import { useUserProfile } from '@/entities/user/hook/useUserProfile';
 import { useUserProfileFormDictionaries } from '@/entities/user/hook/useUserProfileFormDictionaries';
 import { useUserProfileMutations } from '@/entities/user/hook/useUserProfileMutations';
 import type { IUserProfileDto, IUserProfileUpdatePayload } from '@/entities/user/model/user.dto';
+import { bumpUserAvatarVersionAtom } from '@/entities/user/model/user.store';
 
 import { FILE_API } from '@/shared/api/urls';
 import { documentPickerAssetToBase64 } from '@/shared/lib/file-to-base64';
@@ -158,6 +159,8 @@ export default function StudentEditProfilePage() {
 	const [avatarRefreshKey, setAvatarRefreshKey] = useState(() => Date.now());
 	const [hasAvatarError, setHasAvatarError] = useState(false);
 	const [avatarErrorText, setAvatarErrorText] = useState<string | null>(null);
+	const [avatarSuccessText, setAvatarSuccessText] = useState<string | null>(null);
+	const bumpAvatarVersion = useSetAtom(bumpUserAvatarVersionAtom);
 	const [submitState, setSubmitState] = useState<{
 		type: 'success' | 'error';
 		message: string;
@@ -218,7 +221,6 @@ export default function StudentEditProfilePage() {
 			regionId: profile.region?.id ?? 0,
 			cityId: profile.city?.id ?? 0,
 		});
-		setSubmitState(null);
 	}, [profile, reset]);
 
 	useEffect(() => {
@@ -241,8 +243,19 @@ export default function StudentEditProfilePage() {
 	}, [submitState]);
 
 	useEffect(() => {
+		if (!avatarSuccessText) return;
+
+		const timer = setTimeout(() => {
+			setAvatarSuccessText(null);
+		}, 3000);
+
+		return () => clearTimeout(timer);
+	}, [avatarSuccessText]);
+
+	useEffect(() => {
 		setAvatarPreviewUri(null);
 		setHasAvatarError(false);
+		setAvatarSuccessText(null);
 		setAvatarRefreshKey(Date.now());
 	}, [studentId]);
 
@@ -282,6 +295,7 @@ export default function StudentEditProfilePage() {
 		if (!studentId || uploadAvatar.isPending) return;
 
 		setAvatarErrorText(null);
+		setAvatarSuccessText(null);
 		const result = await DocumentPicker.getDocumentAsync({
 			type: ['image/*'],
 			multiple: false,
@@ -312,8 +326,11 @@ export default function StudentEditProfilePage() {
 				contentType: selectedAsset.mimeType ?? 'image/jpeg',
 			});
 			setAvatarRefreshKey(Date.now());
+			bumpAvatarVersion(studentId);
+			setAvatarSuccessText('Изображение загружено');
 		} catch (error) {
 			setAvatarPreviewUri(null);
+			setAvatarSuccessText(null);
 			const message =
 				error instanceof AxiosError
 					? getAxiosErrorMessage(error, 'Не удалось загрузить аватар')
@@ -355,6 +372,9 @@ export default function StudentEditProfilePage() {
 						</Pressable>
 						<Text style={styles.avatarHint}>Нажмите на аватар, чтобы изменить фото</Text>
 						{profile?.email ? <Text style={styles.avatarEmail}>{profile.email}</Text> : null}
+						{avatarSuccessText ? (
+							<Text style={[styles.submitMessage, styles.successText]}>{avatarSuccessText}</Text>
+						) : null}
 						{avatarErrorText ? <Text style={styles.errorText}>{avatarErrorText}</Text> : null}
 					</View>
 
