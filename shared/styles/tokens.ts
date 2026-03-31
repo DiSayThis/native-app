@@ -32,6 +32,7 @@ export type AppTheme = {
 		accentHoverColor: string;
 		accentTextColor: string;
 		accentHoverTextColor: string;
+		shadowColor: string;
 	};
 
 	typography: {
@@ -94,6 +95,7 @@ export const lightTheme: AppTheme = {
 		accentHoverColor: '#aaf46a',
 		accentTextColor: BaseColor.textColor,
 		accentHoverTextColor: '#095851',
+		shadowColor: '#000',
 	},
 	typography: {
 		fontFamily: 'Mulish',
@@ -138,6 +140,7 @@ export const darkTheme: AppTheme = {
 		accentHoverColor: '#9BE95E',
 		accentTextColor: '#07261F',
 		accentHoverTextColor: '#042A24',
+		shadowColor: BaseColor.bgWhite,
 	},
 	typography: {
 		fontFamily: 'Mulish',
