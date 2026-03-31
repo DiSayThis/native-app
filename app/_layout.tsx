@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 
 import { StyleSheet, View } from 'react-native';
 
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppFonts } from '@/shared/lib/use-app-fonts';
@@ -27,16 +29,23 @@ export default function RootLayout() {
 
 	return (
 		<QueryProvider>
-			<SafeAreaProvider>
-				<ThemeProvider>
-					<RootNavigator />
-				</ThemeProvider>
-			</SafeAreaProvider>
+			<GestureHandlerRootView style={styles.gestureRoot}>
+				<SafeAreaProvider>
+					<ThemeProvider>
+						<BottomSheetModalProvider>
+							<RootNavigator />
+						</BottomSheetModalProvider>
+					</ThemeProvider>
+				</SafeAreaProvider>
+			</GestureHandlerRootView>
 		</QueryProvider>
 	);
 }
 
 const styles = StyleSheet.create({
+	gestureRoot: {
+		flex: 1,
+	},
 	fallback: {
 		flex: 1,
 		backgroundColor: lightTheme.colors.background,

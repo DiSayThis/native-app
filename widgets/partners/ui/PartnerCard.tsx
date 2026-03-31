@@ -148,7 +148,7 @@ const createStyles = (theme: AppTheme) =>
 			borderColor: theme.colors.borderColor,
 			backgroundColor: theme.colors.clearWhite,
 			gap: 8,
-			shadowColor: '#000',
+			shadowColor: theme.colors.shadowColor,
 			shadowOffset: {
 				width: 0,
 				height: 6,

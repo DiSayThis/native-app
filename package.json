@@ -12,6 +12,7 @@
 		"lint:format-fix": "prettier --write ."
 	},
 	"dependencies": {
+		"@gorhom/bottom-sheet": "^5.2.8",
 		"@hookform/resolvers": "^5.2.2",
 		"@react-native-async-storage/async-storage": "2.2.0",
 		"@react-native-community/datetimepicker": "^9.1.0",

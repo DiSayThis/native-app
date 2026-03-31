@@ -224,13 +224,14 @@ export default function StudentEditProfilePage() {
 	}, [profile, reset]);
 
 	useEffect(() => {
-		if (selectedCityId === 0) return;
+		if (!activeRegionId || selectedCityId === 0) return;
+		if (!citiesQuery.isSuccess) return;
 
 		const cityExists = cityOptions.some((city) => Number(city.value) === selectedCityId);
 		if (!cityExists) {
 			setValue('cityId', 0, { shouldValidate: true });
 		}
-	}, [cityOptions, selectedCityId, setValue]);
+	}, [activeRegionId, citiesQuery.isSuccess, cityOptions, selectedCityId, setValue]);
 
 	useEffect(() => {
 		if (submitState?.type !== 'success') return;

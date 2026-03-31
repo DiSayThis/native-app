@@ -1,21 +1,13 @@
 import { useMemo, useState } from 'react';
 
-import {
-	ActivityIndicator,
-	FlatList,
-	Pressable,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ChevronDown, Search, X } from 'lucide-react-native';
+import { ChevronDown, X } from 'lucide-react-native';
 
 import { type AppTheme } from '@/shared/styles/tokens';
-import ModalSlide from '@/shared/ui/ModalSlide';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
+import { AutocompleteOptionsModal } from './AutocompleteOptionsModal';
 import { FormFieldShell } from './FormFieldShell';
 import type { SelectOption } from './types';
 
@@ -23,6 +15,8 @@ export type SelectAutocompleteProps = {
 	value?: string | number | boolean;
 	onChange: (value?: string | number | boolean) => void;
 	options: SelectOption[];
+	snapPoints?: Array<string | number>;
+	initialSnapPoint?: number | `${number}%` | 'auto';
 	label?: string;
 	placeholder?: string;
 	errorText?: string;
@@ -39,6 +33,8 @@ export function SelectAutocomplete({
 	value,
 	onChange,
 	options,
+	snapPoints,
+	initialSnapPoint,
 	label,
 	placeholder = 'Выберите...',
 	errorText,
@@ -51,7 +47,6 @@ export function SelectAutocomplete({
 	isLoading = false,
 }: SelectAutocompleteProps) {
 	const [isOpen, setIsOpen] = useState(false);
-	const [query, setQuery] = useState('');
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -59,13 +54,6 @@ export function SelectAutocomplete({
 		() => options.find((option) => String(option.value) === String(value)),
 		[options, value],
 	);
-
-	const filteredOptions = useMemo(() => {
-		if (!searchable) return options;
-		const text = query.trim().toLowerCase();
-		if (!text) return options;
-		return options.filter((option) => option.label.toLowerCase().includes(text));
-	}, [options, query, searchable]);
 
 	const handleClose = () => {
 		setIsOpen(false);
@@ -108,53 +96,21 @@ export function SelectAutocomplete({
 				</View>
 			</Pressable>
 
-			<ModalSlide visible={isOpen} onClose={handleClose} contentStyle={styles.modalCard}>
-				<View style={styles.header}>
-					<Text style={styles.headerTitle}>{label ?? 'Выбор'}</Text>
-					<Pressable onPress={handleClose}>
-						<X size={18} color={theme.colors.labelColor} />
-					</Pressable>
-				</View>
-
-				{searchable ? (
-					<View style={styles.searchWrapper}>
-						<Search size={16} color={theme.colors.labelColor} />
-						<TextInput
-							style={styles.searchInput}
-							placeholder="Поиск"
-							placeholderTextColor={theme.colors.labelColor}
-							value={query}
-							onChangeText={setQuery}
-						/>
-					</View>
-				) : null}
-
-				{isLoading ? (
-					<View style={styles.stateBlock}>
-						<ActivityIndicator color={theme.colors.accentColor} />
-					</View>
-				) : filteredOptions.length === 0 ? (
-					<View style={styles.stateBlock}>
-						<Text style={styles.stateText}>{noOptionsText}</Text>
-					</View>
-				) : (
-					<FlatList
-						data={filteredOptions}
-						keyExtractor={(item) => String(item.value)}
-						renderItem={({ item }) => (
-							<Pressable
-								style={styles.option}
-								onPress={() => {
-									onChange(item.value);
-									handleClose();
-								}}
-							>
-								<Text style={styles.optionText}>{item.label}</Text>
-							</Pressable>
-						)}
-					/>
-				)}
-			</ModalSlide>
+			<AutocompleteOptionsModal
+				visible={isOpen}
+				onClose={handleClose}
+				title={label ?? 'Выбор'}
+				snapPoints={snapPoints}
+				initialSnapPoint={initialSnapPoint}
+				selectedValue={value}
+				options={options}
+				searchable={searchable}
+				noOptionsText={noOptionsText}
+				isLoading={isLoading}
+				onSelect={(nextValue) => {
+					onChange(nextValue);
+				}}
+			/>
 		</FormFieldShell>
 	);
 }
@@ -200,53 +156,5 @@ const createStyles = (theme: AppTheme) =>
 			height: 24,
 			alignItems: 'center',
 			justifyContent: 'center',
-		},
-		modalCard: {
-			maxHeight: '80%',
-			gap: 12,
-		},
-		header: {
-			flexDirection: 'row',
-			alignItems: 'center',
-			justifyContent: 'space-between',
-		},
-		headerTitle: {
-			fontSize: 16,
-			color: theme.colors.textColor,
-			fontFamily: theme.typography.fontFamilyHeadings,
-		},
-		searchWrapper: {
-			minHeight: 44,
-			borderWidth: 1,
-			borderColor: theme.colors.borderColor,
-			borderRadius: 10,
-			flexDirection: 'row',
-			alignItems: 'center',
-			paddingHorizontal: 10,
-			gap: 8,
-		},
-		searchInput: {
-			flex: 1,
-			fontSize: 16,
-			color: theme.colors.textColor,
-			fontFamily: theme.typography.fontFamily,
-		},
-		option: {
-			paddingVertical: 12,
-			borderBottomWidth: 1,
-			borderBottomColor: theme.colors.borderColor,
-		},
-		optionText: {
-			fontSize: 16,
-			color: theme.colors.textColor,
-			fontFamily: theme.typography.fontFamily,
-		},
-		stateBlock: {
-			paddingVertical: 20,
-			alignItems: 'center',
-		},
-		stateText: {
-			color: theme.colors.labelColor,
-			fontFamily: theme.typography.fontFamily,
 		},
 	});

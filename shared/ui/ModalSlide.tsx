@@ -1,11 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Modal, Pressable, type StyleProp, StyleSheet, type ViewStyle } from 'react-native';
+import {
+	KeyboardAvoidingView,
+	Modal,
+	Pressable,
+	type StyleProp,
+	StyleSheet,
+	View,
+	type ViewStyle,
+} from 'react-native';
 
+import BottomSheet from '@gorhom/bottom-sheet';
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
 	Easing,
+	runOnJS,
 	useAnimatedStyle,
 	useSharedValue,
+	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,6 +35,10 @@ interface IModalSlideProps {
 	backdropOpacity?: number;
 	enterDuration?: number;
 	exitDuration?: number;
+	enableSwipeToClose?: boolean;
+	showHandle?: boolean;
+	swipeCloseThreshold?: number;
+	swipeVelocityThreshold?: number;
 }
 
 export default function ModalSlide({
@@ -34,23 +50,85 @@ export default function ModalSlide({
 	backdropOpacity: targetBackdropOpacity = 0.4,
 	enterDuration = 280,
 	exitDuration = 220,
+	enableSwipeToClose = true,
+	showHandle = true,
+	swipeCloseThreshold = 0.22,
+	swipeVelocityThreshold = 1000,
 }: IModalSlideProps) {
 	const [isMounted, setIsMounted] = useState(visible);
+	const isGestureClosingRef = useRef(false);
 	const insets = useSafeAreaInsets();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 	const overlayOpacity = useSharedValue(visible ? 1 : 0);
 	const contentTranslateY = useSharedValue(visible ? 0 : 28);
+	const contentDragY = useSharedValue(0);
 	const contentOpacity = useSharedValue(visible ? 1 : 0);
+	const contentHeight = useSharedValue(1);
+
+	const handleSwipeClose = useCallback(() => {
+		isGestureClosingRef.current = true;
+		onClose();
+	}, [onClose]);
 
 	const overlayAnimatedStyle = useAnimatedStyle(() => ({
-		opacity: overlayOpacity.value,
+		opacity:
+			overlayOpacity.value *
+			(1 - Math.min(contentDragY.value / Math.max(contentHeight.value, 1), 1) * 0.65),
 	}));
 
 	const contentAnimatedStyle = useAnimatedStyle(() => ({
 		opacity: contentOpacity.value,
-		transform: [{ translateY: contentTranslateY.value }],
+		transform: [{ translateY: contentTranslateY.value + contentDragY.value }],
 	}));
+
+	const swipeDownGesture = useMemo(
+		() =>
+			Gesture.Pan()
+				.enabled(isMounted && enableSwipeToClose)
+				.activeOffsetY(10)
+				.failOffsetX([-24, 24])
+				.onUpdate((event) => {
+					contentDragY.value = Math.max(0, event.translationY);
+				})
+				.onEnd((event) => {
+					const shouldClose =
+						event.translationY > contentHeight.value * swipeCloseThreshold ||
+						event.velocityY > swipeVelocityThreshold;
+
+					if (shouldClose) {
+						contentDragY.value = withTiming(
+							Math.max(contentDragY.value, 48),
+							{
+								duration: 120,
+								easing: Easing.out(Easing.quad),
+							},
+							(finished) => {
+								if (finished) {
+									runOnJS(handleSwipeClose)();
+								}
+							},
+						);
+						return;
+					}
+
+					contentDragY.value = withSpring(0, {
+						damping: 22,
+						stiffness: 260,
+						mass: 0.75,
+						velocity: event.velocityY / 1000,
+					});
+				}),
+		[
+			contentDragY,
+			contentHeight,
+			enableSwipeToClose,
+			handleSwipeClose,
+			isMounted,
+			swipeCloseThreshold,
+			swipeVelocityThreshold,
+		],
+	);
 
 	useEffect(() => {
 		const contentEnterDuration = enterDuration;
@@ -60,8 +138,10 @@ export default function ModalSlide({
 
 		if (visible) {
 			setIsMounted(true);
+			isGestureClosingRef.current = false;
 			overlayOpacity.value = 0;
 			contentTranslateY.value = 28;
+			contentDragY.value = 0;
 			contentOpacity.value = 0;
 			overlayOpacity.value = withTiming(1, {
 				duration: overlayEnterDuration,
@@ -76,6 +156,13 @@ export default function ModalSlide({
 				easing: Easing.out(Easing.linear),
 			});
 			return;
+		}
+
+		if (!isGestureClosingRef.current) {
+			contentDragY.value = withTiming(0, {
+				duration: exitDuration,
+				easing: Easing.inOut(Easing.quad),
+			});
 		}
 
 		overlayOpacity.value = withTiming(0, {
@@ -93,13 +180,23 @@ export default function ModalSlide({
 
 		const unmountTimeout = setTimeout(() => {
 			setIsMounted(false);
+			contentDragY.value = 0;
+			isGestureClosingRef.current = false;
 		}, overlayExitDuration);
 
 		return () => clearTimeout(unmountTimeout);
-	}, [contentOpacity, contentTranslateY, enterDuration, exitDuration, overlayOpacity, visible]);
+	}, [
+		contentDragY,
+		contentOpacity,
+		contentTranslateY,
+		enterDuration,
+		exitDuration,
+		overlayOpacity,
+		visible,
+	]);
 
 	return (
-		<Modal
+		<BottomSheet
 			visible={isMounted}
 			animationType="none"
 			transparent
@@ -108,36 +205,60 @@ export default function ModalSlide({
 			navigationBarTranslucent
 			onRequestClose={onClose}
 		>
-			<Animated.View
-				style={[
-					styles.overlay,
-					{ backgroundColor: `rgba(0, 0, 0, ${targetBackdropOpacity})` },
-					overlayAnimatedStyle,
-				]}
-			>
-				{closeOnBackdropPress ? (
-					<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-				) : null}
+			<GestureHandlerRootView style={styles.gestureRoot}>
 				<Animated.View
 					style={[
-						styles.content,
-						{ paddingBottom: Math.max(20, insets.bottom + 8) },
-						contentStyle,
-						contentAnimatedStyle,
+						styles.overlay,
+						{ backgroundColor: `rgba(0, 0, 0, ${targetBackdropOpacity})` },
+						overlayAnimatedStyle,
 					]}
 				>
-					{children}
+					{closeOnBackdropPress ? (
+						<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+					) : null}
+					<KeyboardAvoidingView
+						style={styles.keyboardAvoiding}
+						behavior="padding"
+						pointerEvents="box-none"
+					>
+						<Animated.View
+							onLayout={(event) => {
+								contentHeight.value = event.nativeEvent.layout.height || 1;
+							}}
+							style={[
+								styles.content,
+								{ paddingBottom: Math.max(20, insets.bottom + 8) },
+								contentStyle,
+								contentAnimatedStyle,
+							]}
+						>
+							{enableSwipeToClose && showHandle ? (
+								<GestureDetector gesture={swipeDownGesture}>
+									<View style={styles.handleTouchArea}>
+										<View style={styles.handle} />
+									</View>
+								</GestureDetector>
+							) : null}
+							{children}
+						</Animated.View>
+					</KeyboardAvoidingView>
 				</Animated.View>
-			</Animated.View>
-		</Modal>
+			</GestureHandlerRootView>
+		</BottomSheet>
 	);
 }
 
 const createStyles = (theme: AppTheme) =>
 	StyleSheet.create({
-		overlay: {
+		gestureRoot: {
+			flex: 1,
+		},
+		keyboardAvoiding: {
 			flex: 1,
 			justifyContent: 'flex-end',
+		},
+		overlay: {
+			flex: 1,
 		},
 		content: {
 			padding: 16,
@@ -145,5 +266,20 @@ const createStyles = (theme: AppTheme) =>
 			borderTopRightRadius: 18,
 			backgroundColor: theme.colors.bgWhite,
 			overflow: 'hidden',
+			maxHeight: '92%',
+		},
+		handleTouchArea: {
+			width: '100%',
+			minHeight: 30,
+			alignItems: 'center',
+			paddingTop: 4,
+			paddingBottom: 12,
+		},
+		handle: {
+			width: 44,
+			height: 4,
+			borderRadius: 999,
+			backgroundColor: theme.colors.borderColor,
+			opacity: 0.9,
 		},
 	});
