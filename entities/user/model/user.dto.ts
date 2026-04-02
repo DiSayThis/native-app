@@ -38,6 +38,7 @@ export interface IUserProfileDto {
 	status?: number | null;
 	hasWork?: boolean;
 	balance?: number;
+	promocode?: string;
 	course?: {
 		id: number;
 		name?: string;

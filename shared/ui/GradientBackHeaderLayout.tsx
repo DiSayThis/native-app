@@ -1,11 +1,21 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+	DeviceEventEmitter,
+	Dimensions,
+	findNodeHandle,
+	Keyboard,
+	KeyboardAvoidingView,
+	type NativeScrollEvent,
+	type NativeSyntheticEvent,
+	Platform,
 	Pressable,
 	ScrollView,
 	type StyleProp,
 	StyleSheet,
 	Text,
+	TextInput,
+	UIManager,
 	View,
 	type ViewStyle,
 } from 'react-native';
@@ -19,6 +29,8 @@ import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 const FIXED_HEADER_HEIGHT = 84;
 const FIXED_HEADER_GRADIENT_HEIGHT = 132;
+const KEYBOARD_EXTRA_OFFSET = 40;
+const BASE_CONTENT_BOTTOM_PADDING = 44;
 
 interface IGradientBackHeaderLayoutProps {
 	title: string;
@@ -33,9 +45,75 @@ export default function GradientBackHeaderLayout({
 	contentContainerStyle,
 	onBack,
 }: IGradientBackHeaderLayoutProps) {
+	const scrollRef = useRef<ScrollView>(null);
+	const scrollYRef = useRef(0);
+	const keyboardHeightRef = useRef(0);
+	const pendingFocusedInputRef = useRef<number | null>(null);
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const router = useRouter();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
+
+	useEffect(() => {
+		const scrollToFocusedInput = (target: number | null | undefined) => {
+			if (!target || !scrollRef.current) {
+				return;
+			}
+
+			UIManager.measure(target, (_x, _y, _width, height, _pageX, pageY) => {
+				const keyboardTop = Dimensions.get('window').height - keyboardHeightRef.current;
+				const inputBottom = pageY + height;
+				const overlap = inputBottom - keyboardTop + KEYBOARD_EXTRA_OFFSET;
+
+				if (overlap > 0) {
+					scrollRef.current?.scrollTo({
+						y: scrollYRef.current + overlap,
+						animated: true,
+					});
+				}
+			});
+		};
+
+		const showSubscription = Keyboard.addListener('keyboardDidShow', (event) => {
+			const height = event.endCoordinates.height;
+			keyboardHeightRef.current = height;
+			setKeyboardHeight(height);
+
+			const focusedInput = TextInput.State.currentlyFocusedInput();
+			const focusedInputHandle = focusedInput
+				? (findNodeHandle(focusedInput as unknown as React.Component<any>) as number | null)
+				: null;
+			const target = pendingFocusedInputRef.current ?? focusedInputHandle;
+			if (target) {
+				setTimeout(() => scrollToFocusedInput(target), 40);
+			}
+		});
+		const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+			keyboardHeightRef.current = 0;
+			setKeyboardHeight(0);
+			pendingFocusedInputRef.current = null;
+		});
+		const focusSubscription = DeviceEventEmitter.addListener(
+			'studmart:input-focus',
+			(target: number) => {
+				pendingFocusedInputRef.current = target;
+				setTimeout(() => scrollToFocusedInput(target), 40);
+			},
+		);
+
+		return () => {
+			showSubscription.remove();
+			hideSubscription.remove();
+			focusSubscription.remove();
+		};
+	}, []);
+
+	const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+		scrollYRef.current = event.nativeEvent.contentOffset.y;
+	};
+
+	const dynamicBottomPadding =
+		BASE_CONTENT_BOTTOM_PADDING + keyboardHeight + (keyboardHeight > 0 ? KEYBOARD_EXTRA_OFFSET : 0);
 
 	const handleBack = () => {
 		if (onBack) {
@@ -75,12 +153,29 @@ export default function GradientBackHeaderLayout({
 				</View>
 			</View>
 
-			<ScrollView
-				style={styles.scroll}
-				contentContainerStyle={[styles.content, contentContainerStyle]}
+			<KeyboardAvoidingView
+				style={styles.keyboardAvoiding}
+				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 			>
-				{children}
-			</ScrollView>
+				<ScrollView
+					ref={scrollRef}
+					style={styles.scroll}
+					onScroll={handleScroll}
+					scrollEventThrottle={16}
+					contentContainerStyle={[
+						styles.content,
+						{
+							paddingBottom: dynamicBottomPadding,
+						},
+						contentContainerStyle,
+					]}
+					keyboardShouldPersistTaps="handled"
+					keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+					automaticallyAdjustKeyboardInsets
+				>
+					{children}
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</View>
 	);
 }
@@ -135,6 +230,9 @@ const createStyles = (theme: AppTheme) =>
 			color: theme.colors.textColor,
 		},
 		scroll: {
+			flex: 1,
+		},
+		keyboardAvoiding: {
 			flex: 1,
 		},
 		content: {

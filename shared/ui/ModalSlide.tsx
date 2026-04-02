@@ -10,7 +10,6 @@ import {
 	type ViewStyle,
 } from 'react-native';
 
-import BottomSheet from '@gorhom/bottom-sheet';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
 	Easing,
@@ -196,7 +195,7 @@ export default function ModalSlide({
 	]);
 
 	return (
-		<BottomSheet
+		<Modal
 			visible={isMounted}
 			animationType="none"
 			transparent
@@ -244,7 +243,7 @@ export default function ModalSlide({
 					</KeyboardAvoidingView>
 				</Animated.View>
 			</GestureHandlerRootView>
-		</BottomSheet>
+		</Modal>
 	);
 }
 

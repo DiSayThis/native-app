@@ -13,6 +13,7 @@ export type AppTheme = {
 		bgPurple: string;
 		success: string;
 		error: string;
+		warning: string;
 		gray: string;
 
 		// используемые (derived)
@@ -66,6 +67,7 @@ const BaseColor = {
 	bgPurple: '#ffb9ff',
 	success: '#16a34a',
 	error: '#dc2626',
+	warning: '#d97706',
 	gray: '#888',
 };
 
@@ -126,6 +128,7 @@ export const darkTheme: AppTheme = {
 		bgBrown: '#252B31',
 		bgPurple: '#6F4A6F',
 		gray: '#96A1AD',
+		warning: '#F59E0B',
 		background: '#0F1216',
 		bgPrimary: '#8FE248',
 		bgSecondary: '#1F252B',

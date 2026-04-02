@@ -18,6 +18,7 @@
         "foregroundImage": "./shared/assets/image/adaptive-icon-foreground.png",
         "monochromeImage": "./shared/assets/image/adaptive-icon-monochrome.png"
       },
+      "softwareKeyboardLayoutMode": "resize",
       "predictiveBackGestureEnabled": false
     },
     "web": {

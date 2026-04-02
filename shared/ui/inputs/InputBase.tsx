@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
 	ActivityIndicator,
+	DeviceEventEmitter,
+	findNodeHandle,
 	Pressable,
 	StyleSheet,
 	TextInput,
@@ -55,6 +57,7 @@ export default function InputBase({
 	editable,
 	...rest
 }: IInputBaseProps) {
+	const inputRef = useRef<TextInput>(null);
 	const [showPassword, setShowPassword] = useState(togglePassword);
 	const [isFocused, setIsFocused] = useState(false);
 	const { theme } = useTheme();
@@ -99,6 +102,7 @@ export default function InputBase({
 			>
 				<TextInput
 					{...rest}
+					ref={inputRef}
 					style={[
 						styles.input,
 						multiline ? styles.multiline : null,
@@ -119,6 +123,10 @@ export default function InputBase({
 					onFocus={(event) => {
 						setIsFocused(true);
 						rest.onFocus?.(event);
+						const target = findNodeHandle(inputRef.current);
+						if (target) {
+							DeviceEventEmitter.emit('studmart:input-focus', target);
+						}
 					}}
 					onBlur={(event) => {
 						setIsFocused(false);
