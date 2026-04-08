@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAppFonts } from '@/shared/lib/use-app-fonts';
+import { PushNotificationsProvider } from '@/shared/providers/PushNotificationsProvider';
 import { QueryProvider } from '@/shared/providers/QueryProvider';
 import { lightTheme } from '@/shared/styles/tokens';
 import { ThemeProvider, useTheme } from '@/shared/ui/theme/ThemeProvider';
