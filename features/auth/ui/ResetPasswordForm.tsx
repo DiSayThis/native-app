@@ -133,7 +133,11 @@ export function ResetPasswordForm({ email, resetCode }: ResetPasswordFormProps) 
 					<Button disabled={isSubmitting} onPress={handleSubmit(onSubmit)}>
 						{isSubmitting ? 'Отправка...' : 'Отправить'}
 					</Button>
-					<Button disabled={isSubmitting} onPress={() => router.replace('/login')} variant="secondary">
+					<Button
+						disabled={isSubmitting}
+						onPress={() => router.replace('/login')}
+						variant="secondary"
+					>
 						Вернуться ко входу
 					</Button>
 				</View>

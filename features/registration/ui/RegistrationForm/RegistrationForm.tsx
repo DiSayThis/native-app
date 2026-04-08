@@ -1,13 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-	ActivityIndicator,
-	Modal,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';

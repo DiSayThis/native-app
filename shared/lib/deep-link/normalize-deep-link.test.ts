@@ -6,7 +6,10 @@ describe('normalizeIncomingDeepLink', () => {
 		['https://studmart.ru/', '/'],
 		['https://studmart.ru/login', '/login'],
 		['https://studmart.ru/registration', '/registration'],
-		['https://studmart.ru/registration?promocode=WELCOME2026', '/registration?promocode=WELCOME2026'],
+		[
+			'https://studmart.ru/registration?promocode=WELCOME2026',
+			'/registration?promocode=WELCOME2026',
+		],
 		[
 			'https://studmart.ru/login/reset-password?Email=test%40mail.com&ResetCode=abc123',
 			'/reset-password?Email=test%40mail.com&ResetCode=abc123',
