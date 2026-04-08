@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react-native';
 
-import { CategoryItem } from '../CategoryItem';
 import * as mockCategoryIconCache from '../category-icon-cache';
+import { CategoryItem } from '../CategoryItem';
 
 jest.mock('../category-icon-cache', () => ({
 	getCategoryIconType: jest.fn(),

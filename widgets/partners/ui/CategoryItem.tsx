@@ -59,7 +59,8 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 	const svgColor = isSelected ? theme.colors.accentTextColor : theme.colors.textColor;
 	const shouldRenderSvg = resolvedType === 'svg';
 	const isRasterReady = isRasterIconReady(item.IconUrl);
-	const shouldShowPlaceholder = !item.IconUrl || (shouldRenderSvg ? !safeSvgXml : hasRasterError || !isRasterReady);
+	const shouldShowPlaceholder =
+		!item.IconUrl || (shouldRenderSvg ? !safeSvgXml : hasRasterError || !isRasterReady);
 
 	const animatedChipStyle = useAnimatedStyle(
 		() => ({

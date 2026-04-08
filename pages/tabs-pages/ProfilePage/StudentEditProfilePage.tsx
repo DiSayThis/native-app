@@ -12,10 +12,10 @@ import { z } from 'zod';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 import { useCityRegionQuery } from '@/entities/city-region/hook/useCityRegionQuery';
-import { buildUserAvatarUri } from '@/entities/user/lib/buildUserAvatarUri';
 import { useUserProfile } from '@/entities/user/hook/useUserProfile';
 import { useUserProfileFormDictionaries } from '@/entities/user/hook/useUserProfileFormDictionaries';
 import { useUserProfileMutations } from '@/entities/user/hook/useUserProfileMutations';
+import { buildUserAvatarUri } from '@/entities/user/lib/buildUserAvatarUri';
 import type { IUserProfileDto, IUserProfileUpdatePayload } from '@/entities/user/model/user.dto';
 import { bumpUserAvatarVersionAtom, userAvatarVersionAtom } from '@/entities/user/model/user.store';
 
@@ -259,7 +259,7 @@ export default function StudentEditProfilePage() {
 		setAvatarSuccessText(null);
 	}, [studentId]);
 
-	const avatarVersion = studentId ? avatarVersions[studentId] ?? 0 : 0;
+	const avatarVersion = studentId ? (avatarVersions[studentId] ?? 0) : 0;
 
 	const avatarUri = useMemo(() => {
 		if (avatarPreviewUri) return avatarPreviewUri;

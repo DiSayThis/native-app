@@ -120,7 +120,9 @@ export default function WalletPage() {
 					</Text>
 				</Pressable>
 
-				{referralRewardFlow.rewardErrorText ? <Text style={styles.errorText}>{referralRewardFlow.rewardErrorText}</Text> : null}
+				{referralRewardFlow.rewardErrorText ? (
+					<Text style={styles.errorText}>{referralRewardFlow.rewardErrorText}</Text>
+				) : null}
 			</ScrollView>
 
 			<ReferralInviteModal
@@ -175,7 +177,8 @@ export default function WalletPage() {
 			>
 				<Text style={styles.statusModalTitle}>Недостаточно средств</Text>
 				<Text style={styles.statusModalDescription}>
-					Для получения вознаграждения минимальный баланс должен составлять {MIN_REFERRAL_REWARD_BALANCE} ₽.
+					Для получения вознаграждения минимальный баланс должен составлять{' '}
+					{MIN_REFERRAL_REWARD_BALANCE} ₽.
 				</Text>
 				<Button onPress={referralRewardFlow.closeLowBalanceModal} variant="white">
 					Понятно

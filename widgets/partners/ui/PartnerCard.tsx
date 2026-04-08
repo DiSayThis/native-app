@@ -22,7 +22,11 @@ import type { IPartnerCard } from '@/entities/partner/model/partner.dto';
 import { type AppTheme } from '@/shared/styles/tokens';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
-import { buildPartnerImageUri, isPartnerImageReady, markPartnerImageReady } from './partner-image-cache';
+import {
+	buildPartnerImageUri,
+	isPartnerImageReady,
+	markPartnerImageReady,
+} from './partner-image-cache';
 
 const PARTNER_IMAGE_PLACEHOLDER = require('../../../shared/assets/placeholder.jpg');
 

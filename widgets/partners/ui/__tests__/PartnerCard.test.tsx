@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react-native';
 
-import { PartnerCard } from '../PartnerCard';
 import { buildPartnerImageUri, markPartnerImageReady } from '../partner-image-cache';
+import { PartnerCard } from '../PartnerCard';
 
 type MockExpoImageProps = {
 	placeholder?: unknown;
