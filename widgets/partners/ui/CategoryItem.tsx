@@ -20,6 +20,7 @@ import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 import {
 	getCachedSvgXml,
 	getCategoryIconType,
+	isRasterIconReady,
 	isSvgXmlDocument,
 	markRasterIconReady,
 	resolveSvgXml,
@@ -57,7 +58,8 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 	);
 	const svgColor = isSelected ? theme.colors.accentTextColor : theme.colors.textColor;
 	const shouldRenderSvg = resolvedType === 'svg';
-	const shouldShowPlaceholder = !item.IconUrl || (shouldRenderSvg ? !safeSvgXml : hasRasterError);
+	const isRasterReady = isRasterIconReady(item.IconUrl);
+	const shouldShowPlaceholder = !item.IconUrl || (shouldRenderSvg ? !safeSvgXml : hasRasterError || !isRasterReady);
 
 	const animatedChipStyle = useAnimatedStyle(
 		() => ({
@@ -181,7 +183,7 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 						)
 					) : null}
 					{shouldShowPlaceholder ? (
-						<View style={styles.iconPlaceholder}>
+						<View testID="category-icon-placeholder" style={styles.iconPlaceholder}>
 							<GalleryVerticalEnd size={ICON_SIZE} color={svgColor} />
 						</View>
 					) : null}

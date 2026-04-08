@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { atom } from 'jotai';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
 import type { IUserDto } from './user.dto';
 
@@ -14,7 +16,13 @@ export const userAtom = atom<IUserStore>({
 	error: null,
 });
 
-export const userAvatarVersionAtom = atom<Record<string, number>>({});
+const userAvatarVersionStorage = createJSONStorage<Record<string, number>>(() => AsyncStorage);
+
+export const userAvatarVersionAtom = atomWithStorage<Record<string, number>>(
+	'user-avatar-version',
+	{},
+	userAvatarVersionStorage,
+);
 
 export const bumpUserAvatarVersionAtom = atom(
 	null,

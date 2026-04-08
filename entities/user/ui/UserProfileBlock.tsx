@@ -4,9 +4,9 @@ import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 import { useAtomValue } from 'jotai';
 
+import { buildUserAvatarUri } from '@/entities/user/lib/buildUserAvatarUri';
 import { userAvatarVersionAtom } from '@/entities/user/model/user.store';
 
-import { FILE_API } from '@/shared/api/urls';
 import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
@@ -49,7 +49,7 @@ export function UserProfileBlock({
 		return computed || 'U';
 	}, [firstName, lastName]);
 
-	const avatarUri = `${FILE_API}/Avatars/${studentId}?t=${avatarVersion}`;
+	const avatarUri = buildUserAvatarUri(studentId, avatarVersion);
 	const showAvatarImage = !hasAvatarError;
 
 	return (

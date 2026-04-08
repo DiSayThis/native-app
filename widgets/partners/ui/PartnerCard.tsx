@@ -1,7 +1,8 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Star } from 'lucide-react-native';
 import Animated, {
@@ -18,9 +19,10 @@ import { usePartnerFavoriteToggle } from '@/features/favorites/hook/usePartnerFa
 
 import type { IPartnerCard } from '@/entities/partner/model/partner.dto';
 
-import { FILE_API } from '@/shared/api/urls';
 import { type AppTheme } from '@/shared/styles/tokens';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
+
+import { buildPartnerImageUri, isPartnerImageReady, markPartnerImageReady } from './partner-image-cache';
 
 const PARTNER_IMAGE_PLACEHOLDER = require('../../../shared/assets/placeholder.jpg');
 
@@ -35,7 +37,8 @@ const ENTER_STAGGER_MAX_DELAY = 280;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCardProps) {
-	const [isImageLoading, setIsImageLoading] = useState(true);
+	const imageUri = useMemo(() => buildPartnerImageUri(item.id), [item.id]);
+	const [isImageLoading, setIsImageLoading] = useState(() => !isPartnerImageReady(imageUri));
 	const [hasImageError, setHasImageError] = useState(false);
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
@@ -75,6 +78,11 @@ export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCar
 		[],
 	);
 
+	useEffect(() => {
+		setHasImageError(false);
+		setIsImageLoading(!isPartnerImageReady(imageUri));
+	}, [imageUri]);
+
 	return (
 		<AnimatedPressable
 			entering={enteringAnimation}
@@ -102,29 +110,32 @@ export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCar
 				</Pressable>
 			) : null}
 			<View style={styles.imageContainer}>
-				<Image source={PARTNER_IMAGE_PLACEHOLDER} style={styles.cardImage} resizeMode="cover" />
-				{hasImageError ? null : (
-					<Image
-						source={{ uri: `${FILE_API}/Partners/${item.id}` }}
-						style={[
-							styles.cardImage,
-							styles.networkImage,
-							isImageLoading ? styles.networkImageHidden : null,
-						]}
-						resizeMode="cover"
-						onLoadStart={() => {
+				<Image
+					source={hasImageError ? PARTNER_IMAGE_PLACEHOLDER : { uri: imageUri }}
+					placeholder={!isPartnerImageReady(imageUri) ? PARTNER_IMAGE_PLACEHOLDER : undefined}
+					style={styles.cardImage}
+					contentFit="cover"
+					placeholderContentFit="cover"
+					cachePolicy="memory-disk"
+					transition={hasImageError || isPartnerImageReady(imageUri) ? 0 : 120}
+					onLoadStart={() => {
+						if (!isPartnerImageReady(imageUri)) {
 							setIsImageLoading(true);
-							setHasImageError(false);
-						}}
-						onLoad={() => {
-							setIsImageLoading(false);
-						}}
-						onError={() => {
-							setHasImageError(true);
-							setIsImageLoading(false);
-						}}
-					/>
-				)}
+						}
+						setHasImageError(false);
+					}}
+					onLoad={() => {
+						markPartnerImageReady(imageUri);
+						setIsImageLoading(false);
+					}}
+					onError={() => {
+						setHasImageError(true);
+						setIsImageLoading(false);
+					}}
+				/>
+				{isImageLoading && !hasImageError && !isPartnerImageReady(imageUri) ? (
+					<View style={styles.loadingOverlay} />
+				) : null}
 			</View>
 			<View style={styles.cardInfoRow}>
 				<View style={styles.cardContent}>
@@ -181,13 +192,9 @@ const createStyles = (theme: AppTheme) =>
 			...StyleSheet.absoluteFillObject,
 			backgroundColor: theme.colors.borderColor,
 		},
-		networkImage: {
-			position: 'absolute',
-			top: 0,
-			left: 0,
-		},
-		networkImageHidden: {
-			opacity: 0,
+		loadingOverlay: {
+			...StyleSheet.absoluteFillObject,
+			backgroundColor: 'transparent',
 		},
 		cardInfoRow: {
 			paddingTop: 8,

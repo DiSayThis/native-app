@@ -12,13 +12,13 @@ import { z } from 'zod';
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 import { useCityRegionQuery } from '@/entities/city-region/hook/useCityRegionQuery';
+import { buildUserAvatarUri } from '@/entities/user/lib/buildUserAvatarUri';
 import { useUserProfile } from '@/entities/user/hook/useUserProfile';
 import { useUserProfileFormDictionaries } from '@/entities/user/hook/useUserProfileFormDictionaries';
 import { useUserProfileMutations } from '@/entities/user/hook/useUserProfileMutations';
 import type { IUserProfileDto, IUserProfileUpdatePayload } from '@/entities/user/model/user.dto';
-import { bumpUserAvatarVersionAtom } from '@/entities/user/model/user.store';
+import { bumpUserAvatarVersionAtom, userAvatarVersionAtom } from '@/entities/user/model/user.store';
 
-import { FILE_API } from '@/shared/api/urls';
 import { documentPickerAssetToBase64 } from '@/shared/lib/file-to-base64';
 import { getAxiosErrorMessage } from '@/shared/lib/get-axios-error-message';
 import { type AppTheme } from '@/shared/styles/tokens';
@@ -156,11 +156,11 @@ export default function StudentEditProfilePage() {
 	const { profile, isLoading, isError, refetch } = useUserProfile(studentId);
 	const { updateProfile, uploadAvatar } = useUserProfileMutations(studentId);
 	const [avatarPreviewUri, setAvatarPreviewUri] = useState<string | null>(null);
-	const [avatarRefreshKey, setAvatarRefreshKey] = useState(() => Date.now());
 	const [hasAvatarError, setHasAvatarError] = useState(false);
 	const [avatarErrorText, setAvatarErrorText] = useState<string | null>(null);
 	const [avatarSuccessText, setAvatarSuccessText] = useState<string | null>(null);
 	const bumpAvatarVersion = useSetAtom(bumpUserAvatarVersionAtom);
+	const avatarVersions = useAtomValue(userAvatarVersionAtom);
 	const [submitState, setSubmitState] = useState<{
 		type: 'success' | 'error';
 		message: string;
@@ -257,14 +257,15 @@ export default function StudentEditProfilePage() {
 		setAvatarPreviewUri(null);
 		setHasAvatarError(false);
 		setAvatarSuccessText(null);
-		setAvatarRefreshKey(Date.now());
 	}, [studentId]);
+
+	const avatarVersion = studentId ? avatarVersions[studentId] ?? 0 : 0;
 
 	const avatarUri = useMemo(() => {
 		if (avatarPreviewUri) return avatarPreviewUri;
 		if (!studentId) return null;
-		return `${FILE_API}/Avatars/${studentId}?t=${avatarRefreshKey}`;
-	}, [avatarPreviewUri, avatarRefreshKey, studentId]);
+		return buildUserAvatarUri(studentId, avatarVersion);
+	}, [avatarPreviewUri, avatarVersion, studentId]);
 
 	const initials = useMemo(() => {
 		const computed = `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.trim().toUpperCase();
@@ -326,7 +327,6 @@ export default function StudentEditProfilePage() {
 				image,
 				contentType: selectedAsset.mimeType ?? 'image/jpeg',
 			});
-			setAvatarRefreshKey(Date.now());
 			bumpAvatarVersion(studentId);
 			setAvatarSuccessText('Изображение загружено');
 		} catch (error) {
