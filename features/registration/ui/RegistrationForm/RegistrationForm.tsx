@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
 	ActivityIndicator,
 	Modal,
-	Pressable,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -35,7 +34,11 @@ import StepControls from '../StepControls';
 
 const maxStep = 3;
 
-export default function RegistrationForm() {
+type RegistrationFormProps = {
+	promocode?: string;
+};
+
+export default function RegistrationForm({ promocode = '' }: RegistrationFormProps) {
 	const [step, setStep] = useState(1);
 	const [successRegistered, setSuccessRegistered] = useState(false);
 	const [isValidating, setIsValidating] = useState(false);
@@ -75,6 +78,24 @@ export default function RegistrationForm() {
 	const { mutateAsync: checkEmailDomains, isPending: isCheckingEmailDomains } =
 		useCheckEmailDomains();
 	const { mutateAsync: registration, isPending: isRegistrationPending } = useRegistrationMutation();
+
+	useEffect(() => {
+		const normalizedPromocode = promocode.trim();
+
+		if (!normalizedPromocode) {
+			return;
+		}
+
+		if (methods.getValues('promocode')?.trim()) {
+			return;
+		}
+
+		methods.setValue('promocode', normalizedPromocode, {
+			shouldDirty: false,
+			shouldTouch: false,
+			shouldValidate: false,
+		});
+	}, [methods, promocode]);
 
 	useEffect(() => {
 		if (!successRegistered) return;
@@ -191,7 +212,7 @@ export default function RegistrationForm() {
 
 			<Modal transparent animationType="fade" visible={successRegistered}>
 				<View style={styles.backdrop}>
-					<Pressable style={StyleSheet.absoluteFill} onPress={() => setSuccessRegistered(false)} />
+					<View style={StyleSheet.absoluteFill} />
 					<View style={styles.modalCard}>
 						<Text style={styles.modalTitle}>Благодарим за регистрацию!</Text>
 						<Text style={styles.modalText}>

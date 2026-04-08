@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -24,7 +24,11 @@ const loginFormSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
-export function LoginForm() {
+type LoginFormProps = {
+	openResetPassword?: boolean;
+};
+
+export function LoginForm({ openResetPassword = false }: LoginFormProps) {
 	const [auth, login] = useAtom(loginAtom);
 	const [isPasswordResetVisible, setIsPasswordResetVisible] = useState(false);
 	const [generalError, setGeneralError] = useState<string | null>(null);
@@ -40,6 +44,15 @@ export function LoginForm() {
 	const handleRegistration = () => {
 		router.push('/registration');
 	};
+
+	useEffect(() => {
+		if (!openResetPassword) {
+			return;
+		}
+
+		setIsPasswordResetVisible(true);
+	}, [openResetPassword]);
+
 	const onSubmit = async (formData: LoginFormValues) => {
 		setGeneralError(null);
 		const result = await login({

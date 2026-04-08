@@ -7,5 +7,10 @@ export const authQueries = {
 		authApi.post<IAuthResponse, ILoginPayload>('/login?useCookies=true', data),
 	forgotPassword: (email: string) =>
 		authApi.post<void, { email: string }>('/forgotPassword', { email }),
+	resetPassword: (payload: { email: string; resetCode: string; newPassword: string }) =>
+		authApi.post<void, { email: string; resetCode: string; newPassword: string }>(
+			'/resetPassword',
+			payload,
+		),
 	logout: () => authApi.post('/logout'),
 };

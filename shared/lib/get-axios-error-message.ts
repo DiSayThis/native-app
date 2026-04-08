@@ -6,7 +6,7 @@ type AxiosErrorPayload = {
 	errors?: Array<string | { message?: string }>;
 };
 
-export const getAxiosErrorMessage = (error: AxiosError, fallback = 'Unknown error occurred') => {
+export const getAxiosErrorMessage = (error: AxiosError, fallback = 'Ошибка авторизации') => {
 	const data = error.response?.data as AxiosErrorPayload | undefined;
 
 	if (typeof data?.message === 'string' && data.message.trim().length > 0) return data.message;
