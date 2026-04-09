@@ -224,15 +224,12 @@ const createStyles = (theme: AppTheme) =>
 		scrollContent: {
 			flexGrow: 1,
 			padding: 16,
-			backgroundColor: theme.colors.background,
 		},
 		form: {
 			width: '100%',
 			alignSelf: 'center',
-			padding: theme.spacing.x2,
 			paddingTop: 0,
 			gap: 14,
-			backgroundColor: theme.colors.bgWhite,
 		},
 		title: {
 			fontSize: theme.typography.fontSizeHeading,

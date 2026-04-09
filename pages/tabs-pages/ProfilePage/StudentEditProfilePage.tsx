@@ -166,23 +166,24 @@ export default function StudentEditProfilePage() {
 		message: string;
 	} | null>(null);
 
-	const { control, handleSubmit, reset, setFocus, setValue, watch } = useForm<EditProfileFormValues>({
-		resolver: zodResolver(editProfileSchema),
-		mode: 'onTouched',
-		defaultValues: {
-			firstName: '',
-			lastName: '',
-			birthDate: '',
-			sex: true,
-			status: 0,
-			hasWork: false,
-			specialisation: '',
-			universityId: 0,
-			courseId: 0,
-			regionId: 0,
-			cityId: 0,
-		},
-	});
+	const { control, handleSubmit, reset, setFocus, setValue, watch } =
+		useForm<EditProfileFormValues>({
+			resolver: zodResolver(editProfileSchema),
+			mode: 'onTouched',
+			defaultValues: {
+				firstName: '',
+				lastName: '',
+				birthDate: '',
+				sex: true,
+				status: 0,
+				hasWork: false,
+				specialisation: '',
+				universityId: 0,
+				courseId: 0,
+				regionId: 0,
+				cityId: 0,
+			},
+		});
 
 	const firstName = watch('firstName');
 	const lastName = watch('lastName');
@@ -515,6 +516,7 @@ const createStyles = (theme: AppTheme) =>
 	StyleSheet.create({
 		container: {
 			gap: 16,
+			paddingBottom: 30,
 		},
 		avatarSection: {
 			alignItems: 'center',

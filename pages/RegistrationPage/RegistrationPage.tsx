@@ -26,6 +26,5 @@ const createStyles = (theme: AppTheme) =>
 	StyleSheet.create({
 		page: {
 			flex: 1,
-			backgroundColor: theme.colors.background,
 		},
 	});

@@ -126,10 +126,9 @@ const createStyles = (theme: AppTheme) =>
 			maxWidth: 420,
 			alignSelf: 'center',
 			marginTop: 24,
-			padding: 20,
+			paddingVertical: 20,
 			borderRadius: 24,
 			gap: 14,
-			backgroundColor: theme.colors.bgWhite,
 		},
 		formTitle: {
 			fontSize: theme.typography.fontSizeHeading,

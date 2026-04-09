@@ -10,6 +10,7 @@ import { authQueries } from '@/entities/auth/api/query';
 
 import { type AppTheme } from '@/shared/styles/tokens';
 import { RHFInput } from '@/shared/ui/inputs';
+import KeyboardAwareScrollView from '@/shared/ui/KeyboardAwareScrollView';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 interface IForgotPasswordModalProps {
@@ -65,7 +66,11 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 
 	return (
 		<Modal animationType="fade" transparent visible={visible} onRequestClose={handleClose}>
-			<View style={styles.backdrop}>
+			<KeyboardAwareScrollView
+				contentContainerStyle={styles.backdrop}
+				extraKeyboardSpace={12}
+				bottomOffset={12}
+			>
 				<Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
 				<View style={styles.card}>
 					{isSentSuccessfully ? (
@@ -106,7 +111,7 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 						</>
 					)}
 				</View>
-			</View>
+			</KeyboardAwareScrollView>
 		</Modal>
 	);
 }
@@ -114,7 +119,7 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 const createStyles = (theme: AppTheme) =>
 	StyleSheet.create({
 		backdrop: {
-			flex: 1,
+			flexGrow: 1,
 			justifyContent: 'center',
 			alignItems: 'center',
 			padding: 24,

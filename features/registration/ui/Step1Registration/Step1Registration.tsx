@@ -13,10 +13,7 @@ type Step1RegistrationProps = {
 	onDone?: () => void;
 };
 
-export default function Step1Registration({
-	isFetching,
-	onDone,
-}: Step1RegistrationProps) {
+export default function Step1Registration({ isFetching, onDone }: Step1RegistrationProps) {
 	const { control, setFocus } = useFormContext<IRegistrationFormType>();
 	const [showPassword, setShowPassword] = useState(false);
 
