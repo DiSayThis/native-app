@@ -4,11 +4,16 @@
 		"slug": "studmart-native-app",
 		"version": "1.0.0",
 		"orientation": "portrait",
-		"icon": "./shared/assets/image/icon-1024.png",
+		"icon": "./shared/assets/image/AppIcon.png",
 		"userInterfaceStyle": "automatic",
 		"splash": {
-			"image": "./shared/assets/image/splash-screen-portrait.png",
-			"resizeMode": "cover"
+			"image": "./shared/assets/image/AppIcon.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#9FF84F",
+			"dark": {
+				"image": "./shared/assets/image/AppIcon.png",
+				"backgroundColor": "#9FF84F"
+			}
 		},
 		"ios": {
 			"supportsTablet": true,
@@ -18,8 +23,8 @@
 		"android": {
 			"package": "com.maksimorlov.studmart",
 			"adaptiveIcon": {
-				"foregroundImage": "./shared/assets/image/adaptive-icon-foreground.png",
-				"monochromeImage": "./shared/assets/image/adaptive-icon-monochrome.png"
+				"foregroundImage": "./shared/assets/image/AppIcon.png",
+				"backgroundColor": "#9FF84F"
 			},
 			"softwareKeyboardLayoutMode": "resize",
 			"predictiveBackGestureEnabled": false,

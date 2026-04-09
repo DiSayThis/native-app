@@ -5,7 +5,7 @@ import { Image, StyleSheet, View } from 'react-native';
 import { LoginForm } from '@/features/auth/ui/LoginForm';
 
 import logoImage from '@/shared/assets/image/logo.png';
-import { type AppTheme } from '@/shared/styles/tokens';
+import logoLightImage from '@/shared/assets/image/studmart_logo_light.png';
 import KeyboardAwareScrollView from '@/shared/ui/KeyboardAwareScrollView';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
@@ -14,27 +14,26 @@ type LoginPageProps = {
 };
 
 export default function LoginPage({ openResetPassword = false }: LoginPageProps) {
-	const { theme } = useTheme();
-	const styles = useMemo(() => createStyles(theme), [theme]);
+	const { scheme } = useTheme();
+	const styles = useMemo(() => createStyles(), []);
+	const logoSource = scheme === 'dark' ? logoLightImage : logoImage;
 
 	return (
 		<KeyboardAwareScrollView contentContainerStyle={styles.contentContainer}>
 			<View style={styles.container}>
-				<Image source={logoImage} style={styles.logo} resizeMode="contain" />
+				<Image source={logoSource} style={styles.logo} resizeMode="contain" />
 			</View>
 			<LoginForm openResetPassword={openResetPassword} />
 		</KeyboardAwareScrollView>
 	);
 }
 
-const createStyles = (theme: AppTheme) =>
+const createStyles = () =>
 	StyleSheet.create({
 		contentContainer: {
-			flex: 1,
 			justifyContent: 'center',
 			flexGrow: 1,
-			padding: 16,
-			backgroundColor: theme.colors.background,
+			paddingHorizontal: 16,
 		},
 		container: {
 			justifyContent: 'center',
