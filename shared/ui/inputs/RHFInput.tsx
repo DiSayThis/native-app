@@ -25,6 +25,7 @@ export function RHFInput<T extends FieldValues>({
 					value={String(field.value ?? '')}
 					onChange={field.onChange}
 					errorText={fieldState.error?.message}
+					inputRef={field.ref}
 					onBlur={field.onBlur}
 				/>
 			)}

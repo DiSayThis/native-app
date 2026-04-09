@@ -88,6 +88,8 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 								type="email"
 								placeholder="Введите почту"
 								autoCapitalize="none"
+								returnKeyType="done"
+								onSubmitEditing={handleSubmit(onSubmit)}
 							/>
 							{requestError ? <Text style={styles.errorText}>{requestError}</Text> : null}
 							<Pressable

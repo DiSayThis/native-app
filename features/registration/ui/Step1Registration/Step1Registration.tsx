@@ -8,8 +8,16 @@ import { RHFInput, RHFPassword } from '@/shared/ui/inputs';
 
 import type { IRegistrationFormType } from '../../model/registration.dto';
 
-export default function Step1Registration({ isFetching }: { isFetching?: boolean }) {
-	const { control } = useFormContext<IRegistrationFormType>();
+type Step1RegistrationProps = {
+	isFetching?: boolean;
+	onDone?: () => void;
+};
+
+export default function Step1Registration({
+	isFetching,
+	onDone,
+}: Step1RegistrationProps) {
+	const { control, setFocus } = useFormContext<IRegistrationFormType>();
 	const [showPassword, setShowPassword] = useState(false);
 
 	return (
@@ -21,7 +29,9 @@ export default function Step1Registration({ isFetching }: { isFetching?: boolean
 				label="Почта"
 				placeholder="example@mail.com"
 				isLoading={isFetching}
+				returnKeyType="next"
 				showClearButton
+				onSubmitEditing={() => setFocus('password')}
 			/>
 			<RHFPassword
 				control={control}
@@ -30,8 +40,10 @@ export default function Step1Registration({ isFetching }: { isFetching?: boolean
 				placeholder="Введите пароль"
 				autoComplete="new-password"
 				togglePassword={showPassword}
+				returnKeyType="next"
 				showClearButton
 				onTogglePassword={() => setShowPassword((prev) => !prev)}
+				onSubmitEditing={() => setFocus('confirmPassword')}
 			/>
 			<RHFPassword
 				control={control}
@@ -40,15 +52,19 @@ export default function Step1Registration({ isFetching }: { isFetching?: boolean
 				placeholder="Подтвердите пароль"
 				autoComplete="new-password"
 				togglePassword={showPassword}
+				returnKeyType="next"
 				showClearButton
 				onTogglePassword={() => setShowPassword((prev) => !prev)}
+				onSubmitEditing={() => setFocus('promocode')}
 			/>
 			<RHFInput
 				control={control}
 				name="promocode"
 				label="Есть промокод? (опционально)"
 				placeholder="Введите промокод"
+				returnKeyType="done"
 				showClearButton
+				onSubmitEditing={onDone}
 			/>
 		</View>
 	);

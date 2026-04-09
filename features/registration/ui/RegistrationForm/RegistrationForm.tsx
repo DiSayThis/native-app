@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ActivityIndicator, Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, StyleSheet, Text, View } from 'react-native';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
@@ -9,6 +9,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { getAxiosErrorMessage } from '@/shared/lib/get-axios-error-message';
 import { type AppTheme } from '@/shared/styles/tokens';
+import KeyboardAwareScrollView from '@/shared/ui/KeyboardAwareScrollView';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 import {
@@ -167,13 +168,13 @@ export default function RegistrationForm({ promocode = '' }: RegistrationFormPro
 	return (
 		<>
 			<FormProvider {...methods}>
-				<ScrollView contentContainerStyle={styles.scrollContent}>
+				<KeyboardAwareScrollView contentContainerStyle={styles.scrollContent}>
 					<View style={styles.form}>
 						<Text style={styles.title}>
 							Регистрация {step}/{maxStep}
 						</Text>
 
-						{step === 1 ? <Step1Registration isFetching={isFetching} /> : null}
+						{step === 1 ? <Step1Registration isFetching={isFetching} onDone={onNext} /> : null}
 						{step === 2 ? <Step2Registration /> : null}
 						{step === 3 ? (
 							<Step3Registration
@@ -200,7 +201,7 @@ export default function RegistrationForm({ promocode = '' }: RegistrationFormPro
 							</View>
 						) : null}
 					</View>
-				</ScrollView>
+				</KeyboardAwareScrollView>
 			</FormProvider>
 
 			<Modal transparent animationType="fade" visible={successRegistered}>

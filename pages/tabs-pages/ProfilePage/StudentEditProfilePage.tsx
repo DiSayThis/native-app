@@ -166,7 +166,7 @@ export default function StudentEditProfilePage() {
 		message: string;
 	} | null>(null);
 
-	const { control, handleSubmit, reset, setValue, watch } = useForm<EditProfileFormValues>({
+	const { control, handleSubmit, reset, setFocus, setValue, watch } = useForm<EditProfileFormValues>({
 		resolver: zodResolver(editProfileSchema),
 		mode: 'onTouched',
 		defaultValues: {
@@ -403,14 +403,18 @@ export default function StudentEditProfilePage() {
 									name="firstName"
 									label="Имя"
 									placeholder="Введите имя"
+									returnKeyType="next"
 									showClearButton
+									onSubmitEditing={() => setFocus('lastName')}
 								/>
 								<RHFInput
 									control={control}
 									name="lastName"
 									label="Фамилия"
 									placeholder="Введите фамилию"
+									returnKeyType="next"
 									showClearButton
+									onSubmitEditing={() => setFocus('specialisation')}
 								/>
 								<RHFDateInput control={control} name="birthDate" label="Дата рождения" />
 								<RHFSelect
@@ -443,6 +447,7 @@ export default function StudentEditProfilePage() {
 									name="specialisation"
 									label="Специальность"
 									placeholder="Введите специальность"
+									returnKeyType="done"
 									showClearButton
 								/>
 								<RHFSelectAutocomplete

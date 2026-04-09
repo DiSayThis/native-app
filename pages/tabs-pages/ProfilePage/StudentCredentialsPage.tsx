@@ -106,7 +106,7 @@ export default function StudentCredentialsPage() {
 		message: string;
 	} | null>(null);
 
-	const { control, handleSubmit, reset } = useForm<CredentialsFormValues>({
+	const { control, handleSubmit, reset, setFocus } = useForm<CredentialsFormValues>({
 		resolver: zodResolver(credentialsSchema),
 		mode: 'onTouched',
 		defaultValues: {
@@ -200,21 +200,27 @@ export default function StudentCredentialsPage() {
 										name="firstName"
 										label="Имя"
 										placeholder="Введите имя"
+										returnKeyType="next"
 										showClearButton
+										onSubmitEditing={() => setFocus('lastName')}
 									/>
 									<RHFInput
 										control={control}
 										name="lastName"
 										label="Фамилия"
 										placeholder="Введите фамилию"
+										returnKeyType="next"
 										showClearButton
+										onSubmitEditing={() => setFocus('patronymic')}
 									/>
 									<RHFInput
 										control={control}
 										name="patronymic"
 										label="Отчество"
 										placeholder="Введите отчество"
+										returnKeyType="next"
 										showClearButton
+										onSubmitEditing={() => setFocus('inn')}
 									/>
 								</View>
 							</View>
@@ -229,7 +235,9 @@ export default function StudentCredentialsPage() {
 										placeholder="12 цифр"
 										type="number"
 										formatter={digitsFormatter(12)}
+										returnKeyType="next"
 										showClearButton
+										onSubmitEditing={() => setFocus('accountNumber')}
 									/>
 									<RHFInput
 										control={control}
@@ -238,7 +246,9 @@ export default function StudentCredentialsPage() {
 										placeholder="20 цифр"
 										type="number"
 										formatter={digitsFormatter(20)}
+										returnKeyType="next"
 										showClearButton
+										onSubmitEditing={() => setFocus('bik')}
 									/>
 									<RHFInput
 										control={control}
@@ -247,7 +257,9 @@ export default function StudentCredentialsPage() {
 										placeholder="9 цифр"
 										type="number"
 										formatter={digitsFormatter(9)}
+										returnKeyType="done"
 										showClearButton
+										onSubmitEditing={handleSubmit(onSubmit)}
 									/>
 								</View>
 							</View>
