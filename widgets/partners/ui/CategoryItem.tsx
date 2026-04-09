@@ -20,6 +20,7 @@ import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 import {
 	getCachedSvgXml,
 	getCategoryIconType,
+	isRasterIconInvertible,
 	isRasterIconReady,
 	isSvgXmlDocument,
 	markRasterIconReady,
@@ -39,12 +40,16 @@ const SELECTION_ANIMATION_DURATION = 240;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
-	const { theme } = useTheme();
+	const { scheme, theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 	const initialType = useMemo(() => getCategoryIconType(item.IconUrl), [item.IconUrl]);
 	const rasterSource = useMemo(
 		() => (item.IconUrl ? { uri: item.IconUrl } : undefined),
 		[item.IconUrl],
+	);
+	const shouldInvertRasterIcon = useMemo(
+		() => scheme === 'dark' && !isSelected && isRasterIconInvertible(item.IconUrl),
+		[scheme, isSelected, item.IconUrl],
 	);
 	const [resolvedType, setResolvedType] = useState(initialType);
 	const [svgXml, setSvgXml] = useState<string | null>(() => getCachedSvgXml(item.IconUrl));
@@ -156,7 +161,7 @@ export function CategoryItem({ item, isSelected, onPress }: CategoryItemProps) {
 						) : (
 							<Image
 								source={rasterSource}
-								style={styles.icon}
+								style={[styles.icon, shouldInvertRasterIcon ? styles.iconInverted : null]}
 								resizeMode="contain"
 								onLoadStart={() => {
 									setHasRasterError(false);
@@ -231,6 +236,9 @@ const createStyles = (theme: AppTheme) =>
 		icon: {
 			width: ICON_SIZE,
 			height: ICON_SIZE,
+		},
+		iconInverted: {
+			filter: [{ invert: 1 }],
 		},
 		iconPlaceholder: {
 			width: ICON_SIZE,
