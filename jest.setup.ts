@@ -38,3 +38,32 @@ jest.mock('react-native-reanimated', () => {
 		withTiming: (value: unknown) => value,
 	};
 });
+
+jest.mock('react-native-keyboard-aware-scroll-view', () => {
+	const React = require('react');
+	const ReactNative = require('react-native');
+
+	const MockKeyboardAwareScrollView = React.forwardRef((props: any, ref: any) =>
+		React.createElement(ReactNative.ScrollView, { ...props, ref }),
+	);
+
+	return {
+		__esModule: true,
+		KeyboardAwareScrollView: MockKeyboardAwareScrollView,
+	};
+});
+
+jest.mock('react-native-keyboard-controller', () => {
+	const React = require('react');
+	const ReactNative = require('react-native');
+
+	const MockKeyboardAwareScrollView = React.forwardRef((props: any, ref: any) =>
+		React.createElement(ReactNative.ScrollView, { ...props, ref }),
+	);
+
+	return {
+		__esModule: true,
+		KeyboardProvider: ({ children }: { children: any }) => children,
+		KeyboardAwareScrollView: MockKeyboardAwareScrollView,
+	};
+});

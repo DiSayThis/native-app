@@ -12,6 +12,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useAppFonts } from '@/shared/lib/use-app-fonts';
 import { QueryProvider } from '@/shared/providers/QueryProvider';
 import { lightTheme } from '@/shared/styles/tokens';
+import KeyboardProvider from '@/shared/ui/KeyboardProvider';
 import { ThemeProvider, useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 SplashScreen.preventAutoHideAsync();
@@ -31,11 +32,13 @@ export default function RootLayout() {
 		<QueryProvider>
 			<GestureHandlerRootView style={styles.gestureRoot}>
 				<SafeAreaProvider>
-					<ThemeProvider>
-						<BottomSheetModalProvider>
-							<RootNavigator />
-						</BottomSheetModalProvider>
-					</ThemeProvider>
+					<KeyboardProvider>
+						<ThemeProvider>
+							<BottomSheetModalProvider>
+								<RootNavigator />
+							</BottomSheetModalProvider>
+						</ThemeProvider>
+					</KeyboardProvider>
 				</SafeAreaProvider>
 			</GestureHandlerRootView>
 		</QueryProvider>

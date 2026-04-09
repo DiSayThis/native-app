@@ -1,132 +1,117 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { type ForwardedRef, forwardRef } from 'react';
+
+import { Platform, type ScrollViewProps, StyleSheet } from 'react-native';
 
 import {
-	DeviceEventEmitter,
-	Dimensions,
-	findNodeHandle,
-	Keyboard,
-	KeyboardAvoidingView,
-	Platform,
-	ScrollView,
-	type ScrollViewProps,
-	StyleSheet,
-	TextInput,
-	UIManager,
-	type ViewStyle,
-} from 'react-native';
+	KeyboardAwareScrollView as FallbackKeyboardAwareScrollView,
+	type KeyboardAwareScrollViewProps as FallbackKeyboardAwareScrollViewProps,
+} from 'react-native-keyboard-aware-scroll-view';
+import type * as KeyboardControllerModule from 'react-native-keyboard-controller';
 
-const KEYBOARD_EXTRA_OFFSET = 40;
-const BASE_CONTENT_BOTTOM_PADDING = 24;
+import { isExpoGo } from '@/shared/lib/is-expo-go';
 
-type KeyboardAwareScrollViewProps = ScrollViewProps;
+const DEFAULT_BOTTOM_OFFSET = 62;
+const DEFAULT_EXTRA_KEYBOARD_SPACE = 32;
+const FALLBACK_EXTRA_HEIGHT = 120;
 
-export default function KeyboardAwareScrollView({
-	children,
-	contentContainerStyle,
-	keyboardDismissMode,
-	keyboardShouldPersistTaps,
-	...rest
-}: KeyboardAwareScrollViewProps) {
-	const scrollRef = useRef<ScrollView>(null);
-	const scrollYRef = useRef(0);
-	const keyboardHeightRef = useRef(0);
-	const pendingFocusedInputRef = useRef<number | null>(null);
-	const [keyboardHeight, setKeyboardHeight] = useState(0);
+type KeyboardAwareScrollViewProps = ScrollViewProps &
+	Omit<
+		FallbackKeyboardAwareScrollViewProps,
+		keyof ScrollViewProps | 'innerRef' | 'enableOnAndroid' | 'extraHeight' | 'extraScrollHeight'
+	> & {
+		bottomOffset?: number;
+		extraKeyboardSpace?: number;
+	};
 
-	useEffect(() => {
-		const scrollToFocusedInput = (target: number | null | undefined) => {
-			if (!target || !scrollRef.current) {
-				return;
-			}
+type NativeKeyboardAwareScrollViewRef = KeyboardControllerModule.KeyboardAwareScrollViewRef;
+type FallbackKeyboardAwareScrollViewRef = InstanceType<typeof FallbackKeyboardAwareScrollView>;
 
-			UIManager.measure(target, (_x, _y, _width, height, _pageX, pageY) => {
-				const keyboardTop = Dimensions.get('window').height - keyboardHeightRef.current;
-				const inputBottom = pageY + height;
-				const overlap = inputBottom - keyboardTop + KEYBOARD_EXTRA_OFFSET;
+export type KeyboardAwareScrollViewRef =
+	| FallbackKeyboardAwareScrollViewRef
+	| NativeKeyboardAwareScrollViewRef;
 
-				if (overlap > 0) {
-					scrollRef.current?.scrollTo({
-						y: scrollYRef.current + overlap,
-						animated: true,
-					});
-				}
-			});
-		};
+const setRef = (
+	ref: ForwardedRef<KeyboardAwareScrollViewRef>,
+	value: KeyboardAwareScrollViewRef | null,
+) => {
+	if (typeof ref === 'function') {
+		ref(value);
+		return;
+	}
 
-		const showSubscription = Keyboard.addListener('keyboardDidShow', (event) => {
-			const height = event.endCoordinates.height;
-			keyboardHeightRef.current = height;
-			setKeyboardHeight(height);
+	if (ref) {
+		ref.current = value;
+	}
+};
 
-			const focusedInput = TextInput.State.currentlyFocusedInput();
-			const focusedInputHandle = focusedInput
-				? (findNodeHandle(focusedInput as unknown as React.Component<any>) as number | null)
-				: null;
-			const target = pendingFocusedInputRef.current ?? focusedInputHandle;
-			if (target) {
-				setTimeout(() => scrollToFocusedInput(target), 40);
-			}
-		});
-		const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-			keyboardHeightRef.current = 0;
-			setKeyboardHeight(0);
-			pendingFocusedInputRef.current = null;
-		});
-		const focusSubscription = DeviceEventEmitter.addListener(
-			'studmart:input-focus',
-			(target: number) => {
-				pendingFocusedInputRef.current = target;
-				setTimeout(() => scrollToFocusedInput(target), 40);
-			},
-		);
+const KeyboardAwareScrollView = forwardRef<
+	KeyboardAwareScrollViewRef,
+	KeyboardAwareScrollViewProps
+>(
+	(
+		{
+			contentContainerStyle,
+			keyboardDismissMode,
+			keyboardShouldPersistTaps,
+			bottomOffset = DEFAULT_BOTTOM_OFFSET,
+			extraKeyboardSpace = DEFAULT_EXTRA_KEYBOARD_SPACE,
+			...rest
+		},
+		ref,
+	) => {
+		if (isExpoGo) {
+			return (
+				<FallbackKeyboardAwareScrollView
+					{...rest}
+					innerRef={(instance) => {
+						setRef(ref, instance as unknown as KeyboardAwareScrollViewRef);
+					}}
+					enableOnAndroid
+					enableAutomaticScroll
+					extraHeight={FALLBACK_EXTRA_HEIGHT}
+					extraScrollHeight={extraKeyboardSpace}
+					style={[styles.scroll, rest.style]}
+					contentContainerStyle={[styles.content, contentContainerStyle]}
+					keyboardShouldPersistTaps={keyboardShouldPersistTaps ?? 'handled'}
+					keyboardDismissMode={
+						keyboardDismissMode ?? (Platform.OS === 'ios' ? 'interactive' : 'on-drag')
+					}
+				/>
+			);
+		}
 
-		return () => {
-			showSubscription.remove();
-			hideSubscription.remove();
-			focusSubscription.remove();
-		};
-	}, []);
+		// `react-native-keyboard-controller` must stay lazily loaded outside Expo Go.
+		const { KeyboardAwareScrollView: NativeKeyboardAwareScrollView } =
+			require('react-native-keyboard-controller') as typeof KeyboardControllerModule; // eslint-disable-line @typescript-eslint/no-require-imports
 
-	const dynamicContentContainerStyle = useMemo<ViewStyle>(
-		() => ({
-			paddingBottom:
-				BASE_CONTENT_BOTTOM_PADDING +
-				keyboardHeight +
-				(keyboardHeight > 0 ? KEYBOARD_EXTRA_OFFSET : 0),
-		}),
-		[keyboardHeight],
-	);
-
-	return (
-		<KeyboardAvoidingView
-			style={styles.keyboardAvoiding}
-			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-		>
-			<ScrollView
+		return (
+			<NativeKeyboardAwareScrollView
 				{...rest}
-				ref={scrollRef}
-				style={[styles.scroll, rest.style]}
-				onScroll={(event) => {
-					scrollYRef.current = event.nativeEvent.contentOffset.y;
-					rest.onScroll?.(event);
+				ref={(instance) => {
+					setRef(ref, instance);
 				}}
-				scrollEventThrottle={16}
-				contentContainerStyle={[contentContainerStyle, dynamicContentContainerStyle]}
+				bottomOffset={bottomOffset}
+				extraKeyboardSpace={extraKeyboardSpace}
+				style={[styles.scroll, rest.style]}
+				contentContainerStyle={[styles.content, contentContainerStyle]}
 				keyboardShouldPersistTaps={keyboardShouldPersistTaps ?? 'handled'}
-				keyboardDismissMode={keyboardDismissMode ?? (Platform.OS === 'ios' ? 'interactive' : 'on-drag')}
-				automaticallyAdjustKeyboardInsets
-			>
-				{children}
-			</ScrollView>
-		</KeyboardAvoidingView>
-	);
-}
+				keyboardDismissMode={
+					keyboardDismissMode ?? (Platform.OS === 'ios' ? 'interactive' : 'on-drag')
+				}
+			/>
+		);
+	},
+);
+
+KeyboardAwareScrollView.displayName = 'KeyboardAwareScrollView';
+
+export default KeyboardAwareScrollView;
 
 const styles = StyleSheet.create({
-	keyboardAvoiding: {
-		flex: 1,
-	},
 	scroll: {
 		flex: 1,
+	},
+	content: {
+		paddingBottom: DEFAULT_EXTRA_KEYBOARD_SPACE,
 	},
 });

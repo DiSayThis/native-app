@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useRef, useState, type Ref } from 'react';
+import { type Ref, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
 	ActivityIndicator,
-	DeviceEventEmitter,
-	findNodeHandle,
 	Pressable,
 	StyleSheet,
 	TextInput,
@@ -140,10 +138,6 @@ export default function InputBase({
 					onFocus={(event) => {
 						setIsFocused(true);
 						rest.onFocus?.(event);
-						const target = findNodeHandle(inputRef.current);
-						if (target) {
-							DeviceEventEmitter.emit('studmart:input-focus', target);
-						}
 					}}
 					onBlur={(event) => {
 						setIsFocused(false);
