@@ -139,6 +139,9 @@ export function SupportRequestForm({ requesterName, requesterEmail }: SupportReq
 					multiline
 					rows={7}
 					maxLength={2000}
+					returnKeyType="done"
+					blurOnSubmit
+					onSubmitEditing={handleSubmit(onSubmit)}
 				/>
 			</View>
 

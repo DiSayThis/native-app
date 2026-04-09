@@ -60,6 +60,7 @@ export default function Step3Registration({
 				name="specialisation"
 				label="Специальность"
 				placeholder="Введите специальность"
+				returnKeyType="done"
 				showClearButton
 			/>
 			<RHFSelectAutocomplete

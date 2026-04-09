@@ -7,7 +7,7 @@ import { RHFDateInput, RHFInput, RHFSelectAutocomplete } from '@/shared/ui/input
 import type { IRegistrationFormType } from '../../model/registration.dto';
 
 export default function Step2Registration() {
-	const { control } = useFormContext<IRegistrationFormType>();
+	const { control, setFocus } = useFormContext<IRegistrationFormType>();
 
 	const sexOptions = [
 		{ value: true, label: 'Мужской' },
@@ -21,13 +21,16 @@ export default function Step2Registration() {
 				name="firstName"
 				label="Имя"
 				placeholder="Введите имя"
+				returnKeyType="next"
 				showClearButton
+				onSubmitEditing={() => setFocus('lastName')}
 			/>
 			<RHFInput
 				control={control}
 				name="lastName"
 				label="Фамилия"
 				placeholder="Введите фамилию"
+				returnKeyType="done"
 				showClearButton
 			/>
 			<RHFSelectAutocomplete
