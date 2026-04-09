@@ -34,12 +34,13 @@ export function CategoriesList({
 		({ item }: { item: ICategoryDTO }) => {
 			const isAll = item.id === -1;
 			const isSelected = isAll ? selectedCategoryId === null : selectedCategoryId === item.id;
+			const nextCategoryId = isAll ? null : isSelected ? null : item.id;
 
 			return (
 				<CategoryItem
 					item={item}
 					isSelected={isSelected}
-					onPress={() => onSelectCategory(isAll ? null : item.id)}
+					onPress={() => onSelectCategory(nextCategoryId)}
 				/>
 			);
 		},

@@ -5,7 +5,6 @@ export type CategoryIconType = 'svg' | 'raster' | 'unknown';
 const svgXmlCache = new Map<string, string>();
 const rasterReadyCache = new Set<string>();
 const resolvedTypeCache = new Map<string, Exclude<CategoryIconType, 'unknown'>>();
-const invertibleRasterCache = new Map<string, boolean>();
 const svgResolveInFlight = new Map<string, Promise<string | null>>();
 const warmInFlight = new Map<string, Promise<void>>();
 const SVG_DOC_RE =
@@ -25,23 +24,11 @@ export function getCategoryIconType(url?: string): CategoryIconType {
 		return 'svg';
 	}
 
-	if (/^data:image\/(png|jpe?g|webp)/i.test(url)) {
-		invertibleRasterCache.set(url, true);
+	if (/^data:image\/(png|jpe?g|webp|gif|bmp|avif)/i.test(url)) {
 		return 'raster';
 	}
 
-	if (/^data:image\/(gif|bmp|avif)/i.test(url)) {
-		invertibleRasterCache.set(url, false);
-		return 'raster';
-	}
-
-	if (/\.(png|jpe?g|webp)(?:\?|$)/i.test(url)) {
-		invertibleRasterCache.set(url, true);
-		return 'raster';
-	}
-
-	if (/\.(gif|bmp|avif)(?:\?|$)/i.test(url)) {
-		invertibleRasterCache.set(url, false);
+	if (/\.(png|jpe?g|webp|gif|bmp|avif)(?:\?|$)/i.test(url)) {
 		return 'raster';
 	}
 
@@ -79,14 +66,6 @@ export function markRasterIconReady(url?: string): void {
 	rasterReadyCache.add(url);
 }
 
-export function isRasterIconInvertible(url?: string): boolean {
-	if (!url) {
-		return false;
-	}
-
-	return invertibleRasterCache.get(url) ?? false;
-}
-
 export async function resolveSvgXml(url: string): Promise<string | null> {
 	const cached = svgXmlCache.get(url);
 	if (cached) {
@@ -111,9 +90,15 @@ export async function resolveSvgXml(url: string): Promise<string | null> {
 			}
 
 			const contentType = (response.headers.get('content-type') ?? '').toLowerCase();
-			if (isRasterContentType(contentType)) {
-				resolvedTypeCache.set(url, 'raster');
-				invertibleRasterCache.set(url, isInvertibleRasterContentType(contentType));
+			if (
+				contentType.includes('image/png') ||
+				contentType.includes('image/jpeg') ||
+				contentType.includes('image/jpg') ||
+				contentType.includes('image/webp') ||
+				contentType.includes('image/gif') ||
+				contentType.includes('image/bmp') ||
+				contentType.includes('image/avif')
+			) {
 				return null;
 			}
 
@@ -134,27 +119,6 @@ export async function resolveSvgXml(url: string): Promise<string | null> {
 
 	svgResolveInFlight.set(url, request);
 	return request;
-}
-
-function isRasterContentType(contentType: string): boolean {
-	return (
-		contentType.includes('image/png') ||
-		contentType.includes('image/jpeg') ||
-		contentType.includes('image/jpg') ||
-		contentType.includes('image/webp') ||
-		contentType.includes('image/gif') ||
-		contentType.includes('image/bmp') ||
-		contentType.includes('image/avif')
-	);
-}
-
-function isInvertibleRasterContentType(contentType: string): boolean {
-	return (
-		contentType.includes('image/png') ||
-		contentType.includes('image/jpeg') ||
-		contentType.includes('image/jpg') ||
-		contentType.includes('image/webp')
-	);
 }
 
 export async function warmCategoryIcon(url?: string): Promise<void> {

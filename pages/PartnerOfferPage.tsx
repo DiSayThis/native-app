@@ -49,10 +49,8 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 	const { id: studentId } = useAtomValue(authAtom);
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
-	const { partner, discounts, isLoading, isError, refetch } = usePartnerOfferData(
-		partnerId,
-		studentId,
-	);
+	const { partner, discounts, isLoading, isErrorPartner, isErrorDiscounts, refetch } =
+		usePartnerOfferData(partnerId, studentId);
 	const [isImageLoading, setIsImageLoading] = useState(true);
 	const [hasImageError, setHasImageError] = useState(false);
 	const [isOpeningSite, setIsOpeningSite] = useState(false);
@@ -104,7 +102,7 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 		);
 	}
 
-	if (isError || !partner) {
+	if (isErrorPartner || !partner) {
 		return (
 			<View style={styles.centerState}>
 				<Text style={styles.errorText}>Не удалось загрузить данные партнера</Text>
@@ -238,7 +236,7 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Предложения</Text>
-					{discounts.length > 0 ? (
+					{!isErrorDiscounts && discounts.length > 0 ? (
 						discounts.map((discount) => (
 							<DiscountCard key={discount.id} discount={discount} studentId={studentId} />
 						))

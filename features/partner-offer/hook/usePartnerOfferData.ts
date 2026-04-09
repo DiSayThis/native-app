@@ -22,8 +22,9 @@ export function usePartnerOfferData(partnerId?: string, studentId?: string | nul
 	return {
 		partner: partnerQuery.data,
 		discounts: discountsQuery.data ?? [],
-		isLoading: partnerQuery.isLoading || discountsQuery.isLoading,
-		isError: partnerQuery.isError || discountsQuery.isError,
+		isLoading: partnerQuery.isLoading,
+		isErrorPartner: partnerQuery.isError,
+		isErrorDiscounts: discountsQuery.isError,
 		refetch: async () => {
 			await Promise.all([partnerQuery.refetch(), discountsQuery.refetch()]);
 		},
