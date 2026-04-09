@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ResetPasswordForm } from '@/features/auth/ui/ResetPasswordForm';
 
 import { type AppTheme } from '@/shared/styles/tokens';
+import KeyboardAwareScrollView from '@/shared/ui/KeyboardAwareScrollView';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 type ResetPasswordPageProps = {
@@ -17,11 +18,11 @@ export default function ResetPasswordPage({ email, resetCode }: ResetPasswordPag
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	return (
-		<ScrollView contentContainerStyle={styles.contentContainer}>
+		<KeyboardAwareScrollView contentContainerStyle={styles.contentContainer}>
 			<View style={styles.container}>
 				<ResetPasswordForm email={email} resetCode={resetCode} />
 			</View>
-		</ScrollView>
+		</KeyboardAwareScrollView>
 	);
 }
 

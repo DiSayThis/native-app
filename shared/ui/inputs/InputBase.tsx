@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type Ref } from 'react';
 
 import {
 	ActivityIndicator,
@@ -36,6 +36,7 @@ export interface IInputBaseProps extends Omit<
 	multiline?: boolean;
 	rows?: number;
 	formatter?: (rawValue: string) => string;
+	inputRef?: Ref<TextInput>;
 }
 
 export default function InputBase({
@@ -53,6 +54,7 @@ export default function InputBase({
 	multiline = false,
 	rows = 3,
 	formatter,
+	inputRef: externalInputRef,
 	style,
 	editable,
 	...rest
@@ -91,6 +93,21 @@ export default function InputBase({
 	const hasClear = hasValue && showClearButton && !isLoading;
 	const secureTextEntry = showPasswordToggle ? !showPassword : type === 'password';
 
+	const handleInputRef = (node: TextInput | null) => {
+		inputRef.current = node;
+
+		if (!externalInputRef) {
+			return;
+		}
+
+		if (typeof externalInputRef === 'function') {
+			externalInputRef(node);
+			return;
+		}
+
+		externalInputRef.current = node;
+	};
+
 	return (
 		<FormFieldShell label={label} errorText={errorText}>
 			<View
@@ -102,7 +119,7 @@ export default function InputBase({
 			>
 				<TextInput
 					{...rest}
-					ref={inputRef}
+					ref={handleInputRef}
 					style={[
 						styles.input,
 						multiline ? styles.multiline : null,

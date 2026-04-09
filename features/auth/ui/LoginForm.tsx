@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
@@ -34,7 +34,7 @@ export function LoginForm({ openResetPassword = false }: LoginFormProps) {
 	const [generalError, setGeneralError] = useState<string | null>(null);
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
-	const { control, handleSubmit } = useForm<LoginFormValues>({
+	const { control, handleSubmit, setFocus } = useForm<LoginFormValues>({
 		resolver: zodResolver(loginFormSchema),
 		defaultValues: {
 			email: '',
@@ -69,7 +69,7 @@ export function LoginForm({ openResetPassword = false }: LoginFormProps) {
 	};
 
 	return (
-		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+		<>
 			<View style={styles.form}>
 				<Text style={styles.formTitle}>Вход в студмарт</Text>
 				<View style={styles.inputs}>
@@ -80,14 +80,18 @@ export function LoginForm({ openResetPassword = false }: LoginFormProps) {
 						type="email"
 						placeholder="Введите email"
 						autoCapitalize="none"
+						returnKeyType="next"
 						showClearButton
+						onSubmitEditing={() => setFocus('password')}
 					/>
 					<RHFPassword
 						control={control}
 						name="password"
 						label="Пароль"
 						placeholder="Введите пароль"
+						returnKeyType="done"
 						showClearButton
+						onSubmitEditing={handleSubmit(onSubmit)}
 					/>
 				</View>
 				{generalError ? <Text style={styles.errorText}>{generalError}</Text> : null}
@@ -107,7 +111,7 @@ export function LoginForm({ openResetPassword = false }: LoginFormProps) {
 			<Pressable onPress={() => setIsPasswordResetVisible(true)}>
 				<Text style={styles.forgotPassword}>Не помню пароль</Text>
 			</Pressable>
-		</KeyboardAvoidingView>
+		</>
 	);
 }
 

@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 import { LoginForm } from '@/features/auth/ui/LoginForm';
 
 import logoImage from '@/shared/assets/image/logo.png';
 import { type AppTheme } from '@/shared/styles/tokens';
+import KeyboardAwareScrollView from '@/shared/ui/KeyboardAwareScrollView';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
 type LoginPageProps = {
@@ -17,12 +18,12 @@ export default function LoginPage({ openResetPassword = false }: LoginPageProps)
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
 	return (
-		<ScrollView contentContainerStyle={styles.contentContainer}>
+		<KeyboardAwareScrollView contentContainerStyle={styles.contentContainer}>
 			<View style={styles.container}>
 				<Image source={logoImage} style={styles.logo} resizeMode="contain" />
 			</View>
 			<LoginForm openResetPassword={openResetPassword} />
-		</ScrollView>
+		</KeyboardAwareScrollView>
 	);
 }
 

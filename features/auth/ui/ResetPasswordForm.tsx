@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
@@ -51,7 +51,7 @@ export function ResetPasswordForm({ email, resetCode }: ResetPasswordFormProps) 
 	const [generalError, setGeneralError] = useState<string | null>(null);
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
-	const { control, handleSubmit } = useForm<ResetPasswordFormValues>({
+	const { control, handleSubmit, setFocus } = useForm<ResetPasswordFormValues>({
 		resolver: zodResolver(resetPasswordSchema),
 		defaultValues: {
 			passwordReset: '',
@@ -106,43 +106,45 @@ export function ResetPasswordForm({ email, resetCode }: ResetPasswordFormProps) 
 	}
 
 	return (
-		<KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-			<View style={styles.card}>
-				<Text style={styles.title}>Сброс пароля</Text>
-				<Text style={styles.description}>
-					Введите новый пароль для аккаунта {email || 'по ссылке восстановления'}.
-				</Text>
-				<View style={styles.inputs}>
-					<RHFPassword
-						control={control}
-						name="passwordReset"
-						label="Введите новый пароль"
-						placeholder="********"
-						showClearButton
-					/>
-					<RHFPassword
-						control={control}
-						name="passwordResetConfirm"
-						label="Подтвердите новый пароль"
-						placeholder="********"
-						showClearButton
-					/>
-				</View>
-				{generalError ? <Text style={styles.errorText}>{generalError}</Text> : null}
-				<View style={styles.buttons}>
-					<Button disabled={isSubmitting} onPress={handleSubmit(onSubmit)}>
-						{isSubmitting ? 'Отправка...' : 'Отправить'}
-					</Button>
-					<Button
-						disabled={isSubmitting}
-						onPress={() => router.replace('/login')}
-						variant="secondary"
-					>
-						Вернуться ко входу
-					</Button>
-				</View>
+		<View style={styles.card}>
+			<Text style={styles.title}>Сброс пароля</Text>
+			<Text style={styles.description}>
+				Введите новый пароль для аккаунта {email || 'по ссылке восстановления'}.
+			</Text>
+			<View style={styles.inputs}>
+				<RHFPassword
+					control={control}
+					name="passwordReset"
+					label="Введите новый пароль"
+					placeholder="********"
+					returnKeyType="next"
+					showClearButton
+					onSubmitEditing={() => setFocus('passwordResetConfirm')}
+				/>
+				<RHFPassword
+					control={control}
+					name="passwordResetConfirm"
+					label="Подтвердите новый пароль"
+					placeholder="********"
+					returnKeyType="done"
+					showClearButton
+					onSubmitEditing={handleSubmit(onSubmit)}
+				/>
 			</View>
-		</KeyboardAvoidingView>
+			{generalError ? <Text style={styles.errorText}>{generalError}</Text> : null}
+			<View style={styles.buttons}>
+				<Button disabled={isSubmitting} onPress={handleSubmit(onSubmit)}>
+					{isSubmitting ? 'Отправка...' : 'Отправить'}
+				</Button>
+				<Button
+					disabled={isSubmitting}
+					onPress={() => router.replace('/login')}
+					variant="secondary"
+				>
+					Вернуться ко входу
+				</Button>
+			</View>
+		</View>
 	);
 }
 
