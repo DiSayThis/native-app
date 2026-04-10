@@ -1,18 +1,18 @@
 {
 	"expo": {
-		"name": "Studmart",
+		"name": "Студмарт",
 		"slug": "studmart-native-app",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./shared/assets/image/AppIcon.png",
 		"userInterfaceStyle": "automatic",
 		"splash": {
-			"image": "./shared/assets/image/AppIcon.png",
+			"image": "./shared/assets/image/splash-logo.png",
 			"resizeMode": "contain",
-			"backgroundColor": "#9FF84F",
+			"backgroundColor": "#9AEF58",
 			"dark": {
-				"image": "./shared/assets/image/AppIcon.png",
-				"backgroundColor": "#9FF84F"
+				"image": "./shared/assets/image/splash-logo.png",
+				"backgroundColor": "#9AEF58"
 			}
 		},
 		"ios": {
@@ -23,8 +23,10 @@
 		"android": {
 			"package": "com.maksimorlov.studmart",
 			"adaptiveIcon": {
-				"foregroundImage": "./shared/assets/image/AppIcon.png",
-				"backgroundColor": "#9FF84F"
+				"foregroundImage": "./shared/assets/image/adaptive-icon-foreground.png",
+				"backgroundImage": "./shared/assets/image/adaptive-icon-background.png",
+				"backgroundColor": "#9AEF58",
+				"monochromeImage": "./shared/assets/image/adaptive-icon-monochrome.png"
 			},
 			"softwareKeyboardLayoutMode": "resize",
 			"predictiveBackGestureEnabled": false,
@@ -55,7 +57,7 @@
 				"expo-notifications",
 				{
 					"icon": "./shared/assets/image/notification-icon-96.png",
-					"color": "#8FE248",
+					"color": "#9AEF58",
 					"defaultChannel": "default"
 				}
 			],
