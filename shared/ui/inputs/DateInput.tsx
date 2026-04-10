@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Calendar, X } from 'lucide-react-native';
 
 import { type AppTheme } from '@/shared/styles/tokens';
@@ -87,9 +87,18 @@ export default function DateInput({
 		setIsOpen(true);
 	};
 
-	const onAndroidValueChange = (_event: unknown, nextDate: Date) => {
+	const onAndroidChange = (event: DateTimePickerEvent, nextDate?: Date) => {
 		setIsOpen(false);
-		onChange?.(formatISODate(nextDate));
+
+		if (event.type === 'set' && nextDate) {
+			onChange?.(formatISODate(nextDate));
+		}
+	};
+
+	const onIOSChange = (event: DateTimePickerEvent, nextDate?: Date) => {
+		if (event.type === 'set' && nextDate) {
+			setDraftDate(nextDate);
+		}
 	};
 
 	return (
@@ -129,8 +138,7 @@ export default function DateInput({
 					mode="date"
 					minimumDate={minDate}
 					maximumDate={maxDate}
-					onValueChange={onAndroidValueChange}
-					onDismiss={() => setIsOpen(false)}
+					onChange={onAndroidChange}
 				/>
 			) : null}
 
@@ -156,9 +164,7 @@ export default function DateInput({
 							display="spinner"
 							minimumDate={minDate}
 							maximumDate={maxDate}
-							onValueChange={(_, nextDate) => {
-								if (nextDate) setDraftDate(nextDate);
-							}}
+							onChange={onIOSChange}
 						/>
 					</View>
 				</View>
