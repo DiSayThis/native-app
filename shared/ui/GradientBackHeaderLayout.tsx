@@ -1,9 +1,18 @@
 import { useMemo } from 'react';
 
-import { Pressable, type StyleProp, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import {
+	Pressable,
+	type StyleProp,
+	StyleSheet,
+	Text,
+	useWindowDimensions,
+	View,
+	type ViewStyle,
+} from 'react-native';
 
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { type AppTheme } from '@/shared/styles/tokens';
@@ -27,8 +36,13 @@ export default function GradientBackHeaderLayout({
 	onBack,
 }: IGradientBackHeaderLayoutProps) {
 	const router = useRouter();
+	const { width: viewportWidth } = useWindowDimensions();
+	const insets = useSafeAreaInsets();
 	const { theme } = useTheme();
-	const styles = useMemo(() => createStyles(theme), [theme]);
+	const styles = useMemo(
+		() => createStyles(theme, insets.bottom + theme.spacing.x6),
+		[insets.bottom, theme],
+	);
 
 	const handleBack = () => {
 		if (onBack) {
@@ -43,9 +57,11 @@ export default function GradientBackHeaderLayout({
 		<View style={styles.container}>
 			<View style={styles.fixedHeaderContainer}>
 				<Svg
+					key={`screen-header-gradient-${viewportWidth}`}
 					style={styles.fixedHeaderGradient}
-					width="100%"
-					height="100%"
+					width={viewportWidth}
+					height={FIXED_HEADER_GRADIENT_HEIGHT}
+					viewBox={`0 0 ${viewportWidth} ${FIXED_HEADER_GRADIENT_HEIGHT}`}
 					preserveAspectRatio="none"
 				>
 					<Defs>
@@ -55,7 +71,13 @@ export default function GradientBackHeaderLayout({
 							<Stop offset="1" stopColor={theme.colors.background} stopOpacity="0" />
 						</LinearGradient>
 					</Defs>
-					<Rect x="0" y="0" width="100%" height="100%" fill="url(#screenHeaderGradient)" />
+					<Rect
+						x="0"
+						y="0"
+						width={viewportWidth}
+						height={FIXED_HEADER_GRADIENT_HEIGHT}
+						fill="url(#screenHeaderGradient)"
+					/>
 				</Svg>
 
 				<View style={styles.fixedHeaderContent}>
@@ -75,7 +97,7 @@ export default function GradientBackHeaderLayout({
 	);
 }
 
-const createStyles = (theme: AppTheme) =>
+const createStyles = (theme: AppTheme, bottomContentInset: number) =>
 	StyleSheet.create({
 		container: {
 			flex: 1,
@@ -127,6 +149,6 @@ const createStyles = (theme: AppTheme) =>
 		content: {
 			paddingTop: FIXED_HEADER_HEIGHT + theme.spacing.x4,
 			paddingHorizontal: theme.spacing.x4,
-			paddingBottom: 24,
+			paddingBottom: bottomContentInset,
 		},
 	});

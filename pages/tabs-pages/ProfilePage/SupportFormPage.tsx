@@ -43,6 +43,7 @@ const createStyles = (theme: AppTheme) =>
 	StyleSheet.create({
 		container: {
 			gap: 14,
+			paddingBottom: 48,
 		},
 		subtitle: {
 			fontFamily: theme.typography.fontFamily,

@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { ActivityIndicator, Keyboard, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+	ActivityIndicator,
+	Keyboard,
+	Pressable,
+	StyleSheet,
+	Text,
+	useWindowDimensions,
+	View,
+} from 'react-native';
 
 import {
 	BottomSheetBackdrop,
@@ -49,8 +57,10 @@ export function AutocompleteOptionsModal({
 }: AutocompleteOptionsModalProps) {
 	const [query, setQuery] = useState('');
 	const sheetRef = useRef<BottomSheetModal | null>(null);
+	const { width, height } = useWindowDimensions();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
+	const isWideLayout = width > height;
 	const snapPoints = useMemo<SnapPoint[]>(
 		() => externalSnapPoints ?? ['30%', '50%', '80%'],
 		[externalSnapPoints],
@@ -62,6 +72,7 @@ export function AutocompleteOptionsModal({
 		if (initialSnapPoint === 'auto') {
 			const maxIndex = snapPoints.length - 1;
 			if (maxIndex <= 0) return 0;
+			if (isWideLayout) return maxIndex;
 
 			const totalOptions = options.length;
 			const smallOptionsLimit = 6;
@@ -100,7 +111,7 @@ export function AutocompleteOptionsModal({
 		});
 
 		return nearestIndex;
-	}, [initialSnapPoint, options.length, snapPoints]);
+	}, [initialSnapPoint, isWideLayout, options.length, snapPoints]);
 
 	const filteredOptions = useMemo(() => {
 		if (!searchable) return options;

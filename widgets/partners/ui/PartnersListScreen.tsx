@@ -7,6 +7,7 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
+	useWindowDimensions,
 	View,
 } from 'react-native';
 
@@ -52,6 +53,7 @@ type PartnersListScreenProps = {
 export function PartnersListScreen({ data, hideCategories = false }: PartnersListScreenProps) {
 	const listRef = useRef<FlatList<IPartnerCard>>(null);
 	useScrollToTop(listRef);
+	const { width: viewportWidth } = useWindowDimensions();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -129,19 +131,27 @@ export function PartnersListScreen({ data, hideCategories = false }: PartnersLis
 		<View style={styles.container}>
 			<View pointerEvents="none" style={styles.fixedTitleContainer}>
 				<Svg
+					key={`partners-title-gradient-${viewportWidth}`}
 					style={styles.fixedTitleGradient}
-					width="100%"
-					height="100%"
+					width={viewportWidth}
+					height={FIXED_TITLE_GRADIENT_HEIGHT}
+					viewBox={`0 0 ${viewportWidth} ${FIXED_TITLE_GRADIENT_HEIGHT}`}
 					preserveAspectRatio="none"
 				>
 					<Defs>
 						<LinearGradient id="partnersTitleGradient" x1="0" y1="0" x2="0" y2="1">
 							<Stop offset="0" stopColor={theme.colors.background} stopOpacity="1" />
-							<Stop offset="0.4" stopColor={theme.colors.background} stopOpacity="1" />
+							<Stop offset="0.5" stopColor={theme.colors.background} stopOpacity="1" />
 							<Stop offset="1" stopColor={theme.colors.background} stopOpacity="0" />
 						</LinearGradient>
 					</Defs>
-					<Rect x="0" y="0" width="100%" height="100%" fill="url(#partnersTitleGradient)" />
+					<Rect
+						x="0"
+						y="0"
+						width={viewportWidth}
+						height={FIXED_TITLE_GRADIENT_HEIGHT}
+						fill="url(#partnersTitleGradient)"
+					/>
 				</Svg>
 				<View style={styles.fixedTitleContent}>
 					<Text style={[styles.title, data.titleCentered ? styles.titleCentered : null]}>

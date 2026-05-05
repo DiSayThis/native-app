@@ -4,6 +4,7 @@ import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native
 
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Calendar, X } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { type AppTheme } from '@/shared/styles/tokens';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
@@ -68,6 +69,7 @@ export default function DateInput({
 }: IDateInputProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [draftDate, setDraftDate] = useState<Date | undefined>();
+	const insets = useSafeAreaInsets();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -142,8 +144,24 @@ export default function DateInput({
 				/>
 			) : null}
 
-			<Modal transparent visible={isOpen && Platform.OS === 'ios'} animationType="fade">
-				<View style={styles.modalBackdrop}>
+			<Modal
+				transparent
+				visible={isOpen && Platform.OS === 'ios'}
+				animationType="fade"
+				presentationStyle="overFullScreen"
+				statusBarTranslucent
+				navigationBarTranslucent
+			>
+				<View
+					style={[
+						styles.modalBackdrop,
+						{
+							paddingLeft: insets.left,
+							paddingRight: insets.right,
+							paddingBottom: insets.bottom,
+						},
+					]}
+				>
 					<View style={styles.modalCard}>
 						<View style={styles.modalHeader}>
 							<Pressable onPress={() => setIsOpen(false)}>

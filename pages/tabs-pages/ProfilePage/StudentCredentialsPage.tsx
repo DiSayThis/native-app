@@ -290,6 +290,7 @@ const createStyles = (theme: AppTheme) =>
 	StyleSheet.create({
 		container: {
 			gap: 14,
+			paddingBottom: 48,
 		},
 		loaderContainer: {
 			paddingVertical: 20,

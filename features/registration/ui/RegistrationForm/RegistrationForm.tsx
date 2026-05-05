@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getAxiosErrorMessage } from '@/shared/lib/get-axios-error-message';
 import { type AppTheme } from '@/shared/styles/tokens';
@@ -36,6 +37,7 @@ export default function RegistrationForm({ promocode = '' }: RegistrationFormPro
 	const [step, setStep] = useState(1);
 	const [successRegistered, setSuccessRegistered] = useState(false);
 	const [isValidating, setIsValidating] = useState(false);
+	const insets = useSafeAreaInsets();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -204,8 +206,25 @@ export default function RegistrationForm({ promocode = '' }: RegistrationFormPro
 				</KeyboardAwareScrollView>
 			</FormProvider>
 
-			<Modal transparent animationType="fade" visible={successRegistered}>
-				<View style={styles.backdrop}>
+			<Modal
+				transparent
+				animationType="fade"
+				visible={successRegistered}
+				presentationStyle="overFullScreen"
+				statusBarTranslucent
+				navigationBarTranslucent
+			>
+				<View
+					style={[
+						styles.backdrop,
+						{
+							paddingTop: 24 + insets.top,
+							paddingRight: 24 + insets.right,
+							paddingBottom: 24 + insets.bottom,
+							paddingLeft: 24 + insets.left,
+						},
+					]}
+				>
 					<View style={StyleSheet.absoluteFill} />
 					<View style={styles.modalCard}>
 						<Text style={styles.modalTitle}>Благодарим за регистрацию!</Text>

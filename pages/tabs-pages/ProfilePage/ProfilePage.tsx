@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
 
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 import { useRouter } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronRight } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { authAtom, logoutAtom } from '@/entities/auth/model/auth.store';
 import { cityRegionAtom } from '@/entities/city-region/model/city-region.store';
@@ -25,8 +28,13 @@ const THEME_OPTIONS = [
 export default function ProfilePage() {
 	const [isRegionModalVisible, setIsRegionModalVisible] = useState(false);
 	const router = useRouter();
+	const tabBarHeight = useBottomTabBarHeight();
+	const insets = useSafeAreaInsets();
 	const { theme, themeMode, setThemeMode } = useTheme();
-	const styles = useMemo(() => createStyles(theme), [theme]);
+	const styles = useMemo(
+		() => createStyles(theme, tabBarHeight + insets.bottom + 48),
+		[insets.bottom, tabBarHeight, theme],
+	);
 
 	const { id: studentId } = useAtomValue(authAtom);
 	const { regionName } = useAtomValue(cityRegionAtom);
@@ -43,104 +51,110 @@ export default function ProfilePage() {
 
 	return (
 		<View style={styles.container}>
-			<UserProfileBlock
-				studentId={studentId}
-				firstName={profile?.firstName}
-				lastName={profile?.lastName}
-				isLoading={isLoading}
-				isError={isError}
-				onRetry={() => void refetch()}
-			/>
+			<ScrollView
+				style={styles.scroll}
+				contentContainerStyle={styles.scrollContent}
+				showsVerticalScrollIndicator={false}
+			>
+				<UserProfileBlock
+					studentId={studentId}
+					firstName={profile?.firstName}
+					lastName={profile?.lastName}
+					isLoading={isLoading}
+					isError={isError}
+					onRetry={() => void refetch()}
+				/>
 
-			<View style={styles.menuGroups}>
-				<View style={styles.menuCard}>
-					<Pressable style={styles.menuRow} onPress={() => setIsRegionModalVisible(true)}>
-						<View style={styles.menuTextBlock}>
-							<Text style={styles.menuLabel}>Регион</Text>
-							<Text
-								style={[styles.menuValue, !regionName ? styles.menuValuePlaceholder : null]}
-								numberOfLines={1}
-							>
-								{regionName ?? 'Все регионы'}
-							</Text>
-						</View>
-						<ChevronRight size={18} color={theme.colors.labelColor} />
-					</Pressable>
-					<View style={styles.menuDivider} />
-					<View style={styles.themeSwitcherBlock}>
-						<Text style={styles.menuLabel}>Тема</Text>
-						<View style={styles.themeButtons}>
-							{THEME_OPTIONS.map((option) => {
-								const isActive = themeMode === option.value;
-								return (
-									<Pressable
-										key={option.value}
-										style={[styles.themeButton, isActive ? styles.themeButtonActive : null]}
-										onPress={() => setThemeMode(option.value)}
-									>
-										<Text
-											style={[
-												styles.themeButtonText,
-												isActive ? styles.themeButtonTextActive : null,
-											]}
+				<View style={styles.menuGroups}>
+					<View style={styles.menuCard}>
+						<Pressable style={styles.menuRow} onPress={() => setIsRegionModalVisible(true)}>
+							<View style={styles.menuTextBlock}>
+								<Text style={styles.menuLabel}>Регион</Text>
+								<Text
+									style={[styles.menuValue, !regionName ? styles.menuValuePlaceholder : null]}
+									numberOfLines={1}
+								>
+									{regionName ?? 'Все регионы'}
+								</Text>
+							</View>
+							<ChevronRight size={18} color={theme.colors.labelColor} />
+						</Pressable>
+						<View style={styles.menuDivider} />
+						<View style={styles.themeSwitcherBlock}>
+							<Text style={styles.menuLabel}>Тема</Text>
+							<View style={styles.themeButtons}>
+								{THEME_OPTIONS.map((option) => {
+									const isActive = themeMode === option.value;
+									return (
+										<Pressable
+											key={option.value}
+											style={[styles.themeButton, isActive ? styles.themeButtonActive : null]}
+											onPress={() => setThemeMode(option.value)}
 										>
-											{option.label}
-										</Text>
-									</Pressable>
-								);
-							})}
+											<Text
+												style={[
+													styles.themeButtonText,
+													isActive ? styles.themeButtonTextActive : null,
+												]}
+											>
+												{option.label}
+											</Text>
+										</Pressable>
+									);
+								})}
+							</View>
 						</View>
+					</View>
+
+					<View style={styles.menuCard}>
+						<Pressable style={styles.menuRow} onPress={() => router.push('/student-edit-profile')}>
+							<View style={styles.menuTextBlock}>
+								<Text style={styles.menuLabel}>Личная информация</Text>
+								<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
+									Редактирование профиля
+								</Text>
+							</View>
+							<ChevronRight size={18} color={theme.colors.labelColor} />
+						</Pressable>
+					</View>
+
+					<View style={styles.menuCard}>
+						<Pressable style={styles.menuRow} onPress={() => router.push('/support-form')}>
+							<View style={styles.menuTextBlock}>
+								<Text style={styles.menuLabel}>Техническая поддержка</Text>
+								<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
+									Связаться с нами
+								</Text>
+							</View>
+							<ChevronRight size={18} color={theme.colors.labelColor} />
+						</Pressable>
+						<View style={styles.menuDivider} />
+						<Pressable style={styles.menuRow} onPress={() => router.push('/privacy-policy')}>
+							<View style={styles.menuTextBlock}>
+								<Text style={styles.menuLabel}>Политика конфиденциальности</Text>
+								<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
+									Условия обработки данных
+								</Text>
+							</View>
+							<ChevronRight size={18} color={theme.colors.labelColor} />
+						</Pressable>
+						<View style={styles.menuDivider} />
+						<Pressable style={styles.menuRow} onPress={() => router.push('/cookies-policy')}>
+							<View style={styles.menuTextBlock}>
+								<Text style={styles.menuLabel}>Политика использования файлов cookies</Text>
+								<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
+									Правила использования cookies
+								</Text>
+							</View>
+							<ChevronRight size={18} color={theme.colors.labelColor} />
+						</Pressable>
 					</View>
 				</View>
 
-				<View style={styles.menuCard}>
-					<Pressable style={styles.menuRow} onPress={() => router.push('/student-edit-profile')}>
-						<View style={styles.menuTextBlock}>
-							<Text style={styles.menuLabel}>Личная информация</Text>
-							<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
-								Редактирование профиля
-							</Text>
-						</View>
-						<ChevronRight size={18} color={theme.colors.labelColor} />
-					</Pressable>
-				</View>
-
-				<View style={styles.menuCard}>
-					<Pressable style={styles.menuRow} onPress={() => router.push('/support-form')}>
-						<View style={styles.menuTextBlock}>
-							<Text style={styles.menuLabel}>Техническая поддержка</Text>
-							<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
-								Связаться с нами
-							</Text>
-						</View>
-						<ChevronRight size={18} color={theme.colors.labelColor} />
-					</Pressable>
-					<View style={styles.menuDivider} />
-					<Pressable style={styles.menuRow} onPress={() => router.push('/privacy-policy')}>
-						<View style={styles.menuTextBlock}>
-							<Text style={styles.menuLabel}>Политика конфиденциальности</Text>
-							<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
-								Условия обработки данных
-							</Text>
-						</View>
-						<ChevronRight size={18} color={theme.colors.labelColor} />
-					</Pressable>
-					<View style={styles.menuDivider} />
-					<Pressable style={styles.menuRow} onPress={() => router.push('/cookies-policy')}>
-						<View style={styles.menuTextBlock}>
-							<Text style={styles.menuLabel}>Политика использования файлов cookies</Text>
-							<Text style={[styles.menuValue, styles.menuValuePlaceholder]} numberOfLines={1}>
-								Правила использования cookies
-							</Text>
-						</View>
-						<ChevronRight size={18} color={theme.colors.labelColor} />
-					</Pressable>
-				</View>
-			</View>
-
-			<Button onPress={logout} variant="white">
-				Выйти
-			</Button>
+				<Button onPress={logout} variant="white">
+					Выйти
+				</Button>
+			</ScrollView>
 
 			<RegionSelectionModal
 				visible={isRegionModalVisible}
@@ -150,13 +164,20 @@ export default function ProfilePage() {
 	);
 }
 
-const createStyles = (theme: AppTheme) =>
+const createStyles = (theme: AppTheme, bottomContentInset: number) =>
 	StyleSheet.create({
 		container: {
 			flex: 1,
-			padding: theme.spacing.x4,
 			backgroundColor: theme.colors.background,
+		},
+		scroll: {
+			flex: 1,
+		},
+		scrollContent: {
+			padding: theme.spacing.x4,
+			paddingBottom: bottomContentInset,
 			gap: 14,
+			flexGrow: 1,
 		},
 		menuGroups: {
 			gap: 10,

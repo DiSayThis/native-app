@@ -6,6 +6,7 @@ import {
 	Pressable,
 	type StyleProp,
 	StyleSheet,
+	useWindowDimensions,
 	View,
 	type ViewStyle,
 } from 'react-native';
@@ -57,8 +58,19 @@ export default function ModalSlide({
 	const [isMounted, setIsMounted] = useState(visible);
 	const isGestureClosingRef = useRef(false);
 	const insets = useSafeAreaInsets();
+	const { width, height } = useWindowDimensions();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
+	const isWideLayout = width > height || width >= 768;
+	const containerSafeAreaStyle = useMemo(
+		() => ({
+			paddingLeft: isWideLayout ? Math.max(theme.spacing.x4, insets.left) : insets.left,
+			paddingRight: isWideLayout ? Math.max(theme.spacing.x4, insets.right) : insets.right,
+			paddingTop: isWideLayout ? Math.max(theme.spacing.x4, insets.top) : 0,
+			paddingBottom: isWideLayout ? Math.max(theme.spacing.x4, insets.bottom) : 0,
+		}),
+		[isWideLayout, insets.bottom, insets.left, insets.right, insets.top, theme.spacing.x4],
+	);
 	const overlayOpacity = useSharedValue(visible ? 1 : 0);
 	const contentTranslateY = useSharedValue(visible ? 0 : 28);
 	const contentDragY = useSharedValue(0);
@@ -216,7 +228,11 @@ export default function ModalSlide({
 						<Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 					) : null}
 					<KeyboardAvoidingView
-						style={styles.keyboardAvoiding}
+						style={[
+							styles.keyboardAvoiding,
+							isWideLayout ? styles.keyboardAvoidingCentered : null,
+							containerSafeAreaStyle,
+						]}
 						behavior="padding"
 						pointerEvents="box-none"
 					>
@@ -226,12 +242,13 @@ export default function ModalSlide({
 							}}
 							style={[
 								styles.content,
+								isWideLayout ? styles.contentWide : null,
 								{ paddingBottom: Math.max(20, insets.bottom + 8) },
 								contentStyle,
 								contentAnimatedStyle,
 							]}
 						>
-							{enableSwipeToClose && showHandle ? (
+							{enableSwipeToClose && showHandle && !isWideLayout ? (
 								<GestureDetector gesture={swipeDownGesture}>
 									<View style={styles.handleTouchArea}>
 										<View style={styles.handle} />
@@ -256,6 +273,10 @@ const createStyles = (theme: AppTheme) =>
 			flex: 1,
 			justifyContent: 'flex-end',
 		},
+		keyboardAvoidingCentered: {
+			justifyContent: 'center',
+			paddingHorizontal: theme.spacing.x4,
+		},
 		overlay: {
 			flex: 1,
 		},
@@ -266,6 +287,12 @@ const createStyles = (theme: AppTheme) =>
 			backgroundColor: theme.colors.bgWhite,
 			overflow: 'hidden',
 			maxHeight: '92%',
+		},
+		contentWide: {
+			alignSelf: 'center',
+			width: '100%',
+			maxWidth: 560,
+			borderRadius: 18,
 		},
 		handleTouchArea: {
 			width: '100%',

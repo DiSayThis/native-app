@@ -4,6 +4,7 @@ import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'rea
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { z } from 'zod';
 
 import { authQueries } from '@/entities/auth/api/query';
@@ -30,6 +31,7 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSentSuccessfully, setIsSentSuccessfully] = useState(false);
 	const [requestError, setRequestError] = useState<string | null>(null);
+	const insets = useSafeAreaInsets();
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 	const { control, handleSubmit, reset } = useForm<IForgotPasswordValues>({
@@ -65,9 +67,25 @@ export function ForgotPasswordModal({ visible, onClose }: IForgotPasswordModalPr
 	};
 
 	return (
-		<Modal animationType="fade" transparent visible={visible} onRequestClose={handleClose}>
+		<Modal
+			animationType="fade"
+			transparent
+			visible={visible}
+			presentationStyle="overFullScreen"
+			statusBarTranslucent
+			navigationBarTranslucent
+			onRequestClose={handleClose}
+		>
 			<KeyboardAwareScrollView
-				contentContainerStyle={styles.backdrop}
+				contentContainerStyle={[
+					styles.backdrop,
+					{
+						paddingTop: 24 + insets.top,
+						paddingRight: 24 + insets.right,
+						paddingBottom: 24 + insets.bottom,
+						paddingLeft: 24 + insets.left,
+					},
+				]}
 				extraKeyboardSpace={12}
 				bottomOffset={12}
 			>
