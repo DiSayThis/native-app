@@ -3,7 +3,7 @@
 		"name": "Студмарт",
 		"slug": "studmart-native-app",
 		"version": "1.0.0",
-		"orientation": "portrait",
+		"orientation": "default",
 		"icon": "./shared/assets/image/AppIcon.png",
 		"userInterfaceStyle": "automatic",
 		"splash": {
@@ -17,11 +17,11 @@
 		},
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "com.maksimorlov.Studmart",
+			"bundleIdentifier": "studmart.app",
 			"associatedDomains": ["applinks:studmart.ru", "applinks:www.studmart.ru"]
 		},
 		"android": {
-			"package": "com.maksimorlov.studmart",
+			"package": "studmart.app",
 			"adaptiveIcon": {
 				"foregroundImage": "./shared/assets/image/adaptive-icon-foreground.png",
 				"backgroundImage": "./shared/assets/image/adaptive-icon-background.png",

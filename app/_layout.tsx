@@ -65,10 +65,7 @@ function RootNavigator() {
 
 	return (
 		<>
-			<StatusBar
-				style={scheme === 'dark' ? 'light' : 'dark'}
-				backgroundColor={theme.colors.background}
-			/>
+			<StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
 			<Stack
 				screenOptions={{
 					headerShown: false,
