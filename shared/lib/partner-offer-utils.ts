@@ -30,9 +30,15 @@ export function normalizeSiteUrl(site?: string) {
 		return null;
 	}
 
-	if (site.startsWith('http://') || site.startsWith('https://')) {
-		return site;
+	const normalizedSite = site.trim();
+
+	if (!normalizedSite) {
+		return null;
 	}
 
-	return `https://${site}`;
+	if (normalizedSite.startsWith('http://') || normalizedSite.startsWith('https://')) {
+		return normalizedSite;
+	}
+
+	return `https://${normalizedSite}`;
 }

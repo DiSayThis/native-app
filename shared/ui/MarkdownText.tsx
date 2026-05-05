@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 
-import { Linking } from 'react-native';
-
 import Markdown, { MarkdownIt, type MarkdownProps } from 'react-native-markdown-renderer';
 
+import { openExternalUrl } from '@/shared/lib/open-external-url';
 import { type AppTheme } from '@/shared/styles/tokens';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
@@ -35,15 +34,7 @@ export default function MarkdownText({ content, style }: MarkdownTextProps) {
 			return false;
 		}
 
-		void Linking.canOpenURL(url)
-			.then((canOpen) => {
-				if (!canOpen) {
-					return;
-				}
-
-				return Linking.openURL(url);
-			})
-			.catch(() => undefined);
+		void openExternalUrl(url).catch(() => undefined);
 
 		return false;
 	};

@@ -18,6 +18,8 @@ type UsePartnerFavoriteToggleOptions = {
 	partnerId: string;
 };
 
+const FAVORITES_STALE_TIME = 60_000;
+
 export function usePartnerFavoriteToggle({ partnerId }: UsePartnerFavoriteToggleOptions) {
 	const { id: studentId, role } = useAtomValue(authAtom);
 	const queryClient = useQueryClient();
@@ -27,6 +29,7 @@ export function usePartnerFavoriteToggle({ partnerId }: UsePartnerFavoriteToggle
 		queryKey: favoritesQueryKeys.partners(studentId ?? ''),
 		queryFn: () => getFavoritePartnersQuery(studentId ?? ''),
 		enabled: Boolean(studentId),
+		staleTime: FAVORITES_STALE_TIME,
 	});
 
 	const isFavorite = useMemo(

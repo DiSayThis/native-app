@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import {
 	ActivityIndicator,
 	Image,
-	Linking,
 	Pressable,
 	ScrollView,
 	StyleSheet,
@@ -30,6 +29,7 @@ import { DiscountCard } from '@/entities/partner/ui/DiscountCard';
 
 import { FILE_API } from '@/shared/api/urls';
 import { normalizeRichText, normalizeSiteUrl } from '@/shared/lib/partner-offer-utils';
+import { openExternalUrl } from '@/shared/lib/open-external-url';
 import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
 import MarkdownText from '@/shared/ui/MarkdownText';
@@ -123,11 +123,7 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 
 		try {
 			setIsOpeningSite(true);
-			const isSupported = await Linking.canOpenURL(siteUrl);
-			if (!isSupported) {
-				return;
-			}
-			await Linking.openURL(siteUrl);
+			await openExternalUrl(siteUrl);
 		} finally {
 			setIsOpeningSite(false);
 		}
