@@ -22,6 +22,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useOverlayBackDismiss } from '../lib/use-overlay-back-dismiss';
 import { type AppTheme } from '../styles/tokens';
 
 import { useTheme } from './theme/ThemeProvider';
@@ -81,6 +82,11 @@ export default function ModalSlide({
 		isGestureClosingRef.current = true;
 		onClose();
 	}, [onClose]);
+
+	useOverlayBackDismiss({
+		enabled: visible,
+		onDismiss: onClose,
+	});
 
 	const overlayAnimatedStyle = useAnimatedStyle(() => ({
 		opacity:

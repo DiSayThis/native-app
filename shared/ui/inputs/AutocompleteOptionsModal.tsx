@@ -19,6 +19,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { Check, Search, X } from 'lucide-react-native';
 
+import { useOverlayBackDismiss } from '@/shared/lib/use-overlay-back-dismiss';
 import { type AppTheme } from '@/shared/styles/tokens';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
@@ -119,6 +120,11 @@ export function AutocompleteOptionsModal({
 		if (!normalizedQuery) return options;
 		return options.filter((option) => option.label.toLowerCase().includes(normalizedQuery));
 	}, [options, query, searchable]);
+
+	useOverlayBackDismiss({
+		enabled: visible,
+		onDismiss: () => sheetRef.current?.dismiss(),
+	});
 
 	useEffect(() => {
 		if (visible) {
