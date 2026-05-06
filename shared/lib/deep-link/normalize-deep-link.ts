@@ -1,4 +1,24 @@
 const FALLBACK_ROUTE = '/';
+const ALLOWED_WEB_PATHS = new Map<string, string>([
+	['/', '/'],
+	['/registration', '/registration'],
+	['/login', '/login'],
+	['/login/reset-password', '/reset-password'],
+	['/student-personal-account', '/profile'],
+	['/student-personal-account/profile', '/profile'],
+	['/student-personal-account/edit-profile', '/student-edit-profile'],
+	['/student-personal-account/personal-info', '/student-edit-profile'],
+	['/student-personal-account/personal-data', '/student-edit-profile'],
+	['/student-personal-account/student-credentials', '/student-credentials'],
+	['/student-personal-account/credentials', '/student-credentials'],
+	['/student-personal-account/support', '/support-form'],
+	['/student-personal-account/support-form', '/support-form'],
+	['/student-personal-account/privacy-policy', '/privacy-policy'],
+	['/student-personal-account/cookies-policy', '/cookies-policy'],
+	['/privacy-policy', '/privacy-policy'],
+	['/files/Пользовательское соглашение.pdf', '/privacy-policy'],
+	['/files/Политика конфиденциальности.pdf', '/cookies-policy'],
+]);
 
 const STUDENT_ACCOUNT_ROUTE_MAP: Record<string, string> = {
 	'': '/profile',
@@ -54,6 +74,19 @@ export function normalizeIncomingDeepLink(path: string) {
 			? `/${parsedUrl.host}${parsedUrl.pathname}`
 			: parsedUrl.pathname;
 	const pathname = normalizePathname(rawPathname);
+
+	if (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') {
+		if (pathname.startsWith('/partner-offer/')) {
+			const partnerId = pathname.split('/').filter(Boolean)[1];
+
+			return partnerId
+				? withSearch(`/partner-offer/${partnerId}`, parsedUrl.search)
+				: FALLBACK_ROUTE;
+		}
+
+		const allowedRoute = ALLOWED_WEB_PATHS.get(pathname);
+		return allowedRoute ? withSearch(allowedRoute, parsedUrl.search) : FALLBACK_ROUTE;
+	}
 
 	if (pathname === '/' || pathname === '/registration' || pathname === '/login') {
 		return withSearch(pathname, parsedUrl.search);

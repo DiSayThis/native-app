@@ -18,7 +18,7 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "studmart.app",
-			"associatedDomains": ["applinks:studmart.ru", "applinks:www.studmart.ru"]
+			"associatedDomains": ["applinks:studmart.ru"]
 		},
 		"android": {
 			"package": "studmart.app",
@@ -37,11 +37,43 @@
 					"data": [
 						{
 							"scheme": "https",
-							"host": "studmart.ru"
+							"host": "studmart.ru",
+							"path": "/"
 						},
 						{
 							"scheme": "https",
-							"host": "www.studmart.ru"
+							"host": "studmart.ru",
+							"path": "/registration"
+						},
+						{
+							"scheme": "https",
+							"host": "studmart.ru",
+							"pathPrefix": "/login"
+						},
+						{
+							"scheme": "https",
+							"host": "studmart.ru",
+							"pathPrefix": "/partner-offer"
+						},
+						{
+							"scheme": "https",
+							"host": "studmart.ru",
+							"pathPrefix": "/student-personal-account"
+						},
+						{
+							"scheme": "https",
+							"host": "studmart.ru",
+							"pathPrefix": "/privacy-policy"
+						},
+						{
+							"scheme": "https",
+							"host": "studmart.ru",
+							"path": "/files/Пользовательское соглашение.pdf"
+						},
+						{
+							"scheme": "https",
+							"host": "studmart.ru",
+							"path": "/files/Политика конфиденциальности.pdf"
 						}
 					],
 					"category": ["BROWSABLE", "DEFAULT"]
