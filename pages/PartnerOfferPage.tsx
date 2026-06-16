@@ -1,14 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import {
-	ActivityIndicator,
-	Image,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 import { useAtomValue } from 'jotai';
@@ -26,17 +18,16 @@ import { usePartnerOfferData } from '@/features/partner-offer/hook/usePartnerOff
 
 import { authAtom } from '@/entities/auth/model/auth.store';
 import { DiscountCard } from '@/entities/partner/ui/DiscountCard';
+import { PartnerImage } from '@/entities/partner/ui/PartnerImage';
 
-import { FILE_API } from '@/shared/api/urls';
-import { normalizeRichText, normalizeSiteUrl } from '@/shared/lib/partner-offer-utils';
 import { openExternalUrl } from '@/shared/lib/open-external-url';
+import { normalizeRichText, normalizeSiteUrl } from '@/shared/lib/partner-offer-utils';
 import { type AppTheme } from '@/shared/styles/tokens';
 import Button from '@/shared/ui/Button';
 import MarkdownText from '@/shared/ui/MarkdownText';
 import ModalSlide from '@/shared/ui/ModalSlide';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
-const PARTNER_IMAGE_PLACEHOLDER = require('../shared/assets/placeholder.jpg');
 const FIXED_HEADER_HEIGHT = 56;
 const FIXED_HEADER_GRADIENT_HEIGHT = 96;
 
@@ -51,8 +42,6 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 	const styles = useMemo(() => createStyles(theme), [theme]);
 	const { partner, discounts, isLoading, isErrorPartner, isErrorDiscounts, refetch } =
 		usePartnerOfferData(partnerId, studentId);
-	const [isImageLoading, setIsImageLoading] = useState(true);
-	const [hasImageError, setHasImageError] = useState(false);
 	const [isOpeningSite, setIsOpeningSite] = useState(false);
 	const [isDescriptionModalVisible, setIsDescriptionModalVisible] = useState(false);
 	const starScale = useSharedValue(1);
@@ -184,33 +173,7 @@ export default function PartnerOfferPage({ partnerId }: PartnerOfferPageProps) {
 			<ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
 				<View style={styles.partnerCard}>
 					<View style={styles.imageContainer}>
-						<Image
-							source={PARTNER_IMAGE_PLACEHOLDER}
-							style={styles.partnerImage}
-							resizeMode="cover"
-						/>
-						{hasImageError ? null : (
-							<Image
-								source={{ uri: `${FILE_API}/Partners/${partner.id}` }}
-								style={[
-									styles.partnerImage,
-									styles.networkImage,
-									isImageLoading ? styles.networkImageHidden : null,
-								]}
-								resizeMode="cover"
-								onLoadStart={() => {
-									setIsImageLoading(true);
-									setHasImageError(false);
-								}}
-								onLoad={() => {
-									setIsImageLoading(false);
-								}}
-								onError={() => {
-									setHasImageError(true);
-									setIsImageLoading(false);
-								}}
-							/>
-						)}
+						<PartnerImage partnerId={partner.id} style={styles.partnerImage} />
 					</View>
 					{cleanSubtitle ? <Text style={styles.partnerSubtitle}>{cleanSubtitle}</Text> : null}
 					{partner?.description ? (
@@ -374,14 +337,6 @@ const createStyles = (theme: AppTheme) =>
 		partnerImage: {
 			...StyleSheet.absoluteFillObject,
 			backgroundColor: theme.colors.borderColor,
-		},
-		networkImage: {
-			position: 'absolute',
-			top: 0,
-			left: 0,
-		},
-		networkImageHidden: {
-			opacity: 0,
 		},
 		partnerSubtitle: {
 			fontFamily: theme.typography.fontFamilyHeadings,

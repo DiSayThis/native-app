@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react-native';
 
-import { buildPartnerImageUri, markPartnerImageReady } from '../partner-image-cache';
 import { PartnerCard } from '../PartnerCard';
 
 type MockExpoImageProps = {
 	placeholder?: unknown;
+	recyclingKey?: string;
 	transition?: number;
 };
 
@@ -62,10 +62,7 @@ describe('PartnerCard', () => {
 		expect(props.transition).toBe(120);
 	});
 
-	it('does not show placeholder again for warmed image', () => {
-		const imageUri = buildPartnerImageUri('partner-ready');
-		markPartnerImageReady(imageUri);
-
+	it('uses a stable recycling key for partner image retries and list reuse', () => {
 		render(
 			<PartnerCard
 				index={0}
@@ -83,7 +80,7 @@ describe('PartnerCard', () => {
 		expect(mockExpoImage).toHaveBeenCalled();
 		const props = mockExpoImage.mock.calls[0]?.[0];
 		expect(props).toBeDefined();
-		expect(props.placeholder).toBeUndefined();
-		expect(props.transition).toBe(0);
+		expect(props.placeholder).toBeDefined();
+		expect(props.recyclingKey).toContain('partner-ready');
 	});
 });
