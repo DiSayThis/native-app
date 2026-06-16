@@ -1,6 +1,6 @@
-import { renderHook } from '@testing-library/react-native';
-
 import { BackHandler } from 'react-native';
+
+import { renderHook } from '@testing-library/react-native';
 
 import { useOverlayBackDismiss } from './use-overlay-back-dismiss';
 
@@ -13,7 +13,7 @@ jest.mock('react-native', () => {
 	return {
 		...actual,
 		BackHandler: {
-			addEventListener: (...args: unknown[]) => mockAddListener(...args),
+			addEventListener: jest.fn((...args: unknown[]) => mockAddListener(...args)),
 		},
 	};
 });

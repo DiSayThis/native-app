@@ -201,7 +201,6 @@ describe('RegistrationForm', () => {
 
 	beforeEach(() => {
 		jest.clearAllMocks();
-		jest.useFakeTimers();
 
 		refetch.mockResolvedValue({ data: null });
 		checkEmailDomains.mockResolvedValue(true);
@@ -227,10 +226,6 @@ describe('RegistrationForm', () => {
 			mutateAsync: registration,
 			isPending: false,
 		} as any);
-	});
-
-	afterEach(() => {
-		jest.useRealTimers();
 	});
 
 	const fillStep1 = () => {
@@ -302,6 +297,8 @@ describe('RegistrationForm', () => {
 	});
 
 	it('submits registration data and shows success modal', async () => {
+		jest.useFakeTimers();
+
 		render(<RegistrationForm />);
 
 		fillStep1();
@@ -335,5 +332,7 @@ describe('RegistrationForm', () => {
 		act(() => {
 			jest.runOnlyPendingTimers();
 		});
+
+		jest.useRealTimers();
 	});
 });
