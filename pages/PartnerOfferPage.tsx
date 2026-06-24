@@ -336,7 +336,7 @@ const createStyles = (theme: AppTheme) =>
 		},
 		partnerImage: {
 			...StyleSheet.absoluteFillObject,
-			backgroundColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.imageBackground,
 		},
 		partnerSubtitle: {
 			fontFamily: theme.typography.fontFamilyHeadings,

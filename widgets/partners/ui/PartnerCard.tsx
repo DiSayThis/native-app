@@ -153,7 +153,7 @@ const createStyles = (theme: AppTheme) =>
 		},
 		cardImage: {
 			...StyleSheet.absoluteFillObject,
-			backgroundColor: theme.colors.borderColor,
+			backgroundColor: theme.colors.imageBackground,
 		},
 		cardInfoRow: {
 			paddingTop: 8,

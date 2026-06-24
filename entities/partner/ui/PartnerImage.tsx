@@ -1,16 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { AppState } from 'react-native';
 import type { ImageStyle, StyleProp } from 'react-native';
 
 import { Image } from 'expo-image';
 
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
 
-import { buildPartnerImageUri } from '../lib/partner-image';
+import {
+	buildPartnerImageUri,
+	getPartnerImageCacheBucket,
+	getPartnerImageMsUntilNextRefresh,
+} from '../lib/partner-image';
 
 const PARTNER_IMAGE_PLACEHOLDER = require('../../../shared/assets/placeholder.jpg');
 const IMAGE_STALL_TIMEOUT_MS = 6000;
-const MAX_IMAGE_RETRIES = 2;
+const MAX_IMAGE_RETRIES = 5;
 
 type PartnerImageProps = {
 	partnerId: string;
@@ -26,7 +31,11 @@ type LoadState = {
 
 export function PartnerImage({ partnerId, style, testID, transition = 120 }: PartnerImageProps) {
 	const { theme } = useTheme();
-	const imageUri = useMemo(() => buildPartnerImageUri(partnerId), [partnerId]);
+	const [cacheBucket, setCacheBucket] = useState(() => getPartnerImageCacheBucket());
+	const imageUri = useMemo(
+		() => buildPartnerImageUri(partnerId, cacheBucket),
+		[partnerId, cacheBucket],
+	);
 	const stallTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [{ hasImageError, retryCount }, setLoadState] = useState<LoadState>({
 		hasImageError: false,
@@ -64,6 +73,34 @@ export function PartnerImage({ partnerId, style, testID, transition = 120 }: Par
 		return clearStallTimeout;
 	}, [imageUri]);
 
+	useEffect(() => {
+		const scheduleCacheRefresh = () => {
+			const refreshDelay = getPartnerImageMsUntilNextRefresh();
+			return setTimeout(() => {
+				setCacheBucket(getPartnerImageCacheBucket());
+			}, refreshDelay);
+		};
+
+		const refreshTimeout = scheduleCacheRefresh();
+
+		return () => clearTimeout(refreshTimeout);
+	}, [cacheBucket]);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener('change', (nextAppState) => {
+			if (nextAppState !== 'active') {
+				return;
+			}
+
+			setCacheBucket((currentBucket) => {
+				const nextBucket = getPartnerImageCacheBucket();
+				return nextBucket === currentBucket ? currentBucket : nextBucket;
+			});
+		});
+
+		return () => subscription.remove();
+	}, []);
+
 	const imageRequestKey = `${imageUri}:${retryCount}`;
 
 	return (
@@ -77,7 +114,7 @@ export function PartnerImage({ partnerId, style, testID, transition = 120 }: Par
 			placeholderContentFit="cover"
 			cachePolicy="memory-disk"
 			transition={hasImageError ? 0 : transition}
-			style={[{ backgroundColor: theme.colors.borderColor }, style]}
+			style={[{ backgroundColor: theme.colors.imageBackground }, style]}
 			onLoadStart={() => {
 				if (hasImageError) {
 					return;
