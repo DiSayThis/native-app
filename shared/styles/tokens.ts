@@ -6,6 +6,7 @@ export type AppTheme = {
 		// базовые
 		bgWhite: string;
 		clearWhite: any;
+		imageBackground: string;
 		textColor: string;
 		bgGreen: string;
 		bgBrown: string;
@@ -60,6 +61,7 @@ export type AppTheme = {
 const BaseColor = {
 	bgWhite: '#f8f8f8',
 	clearWhite: '#fff',
+	imageBackground: '#fff',
 	textColor: '#032c28',
 	bgGreen: '#8fe248',
 	bgBrown: '#f0e9e2',

@@ -84,6 +84,16 @@ export function normalizeIncomingDeepLink(path: string) {
 				: FALLBACK_ROUTE;
 		}
 
+		if (pathname.startsWith('/student-personal-account/')) {
+			const accountSection = pathname.replace('/student-personal-account/', '');
+			const normalizedSection = accountSection.split('/').filter(Boolean)[0] ?? '';
+
+			return withSearch(
+				STUDENT_ACCOUNT_ROUTE_MAP[normalizedSection] ?? '/profile',
+				parsedUrl.search,
+			);
+		}
+
 		const allowedRoute = ALLOWED_WEB_PATHS.get(pathname);
 		return allowedRoute ? withSearch(allowedRoute, parsedUrl.search) : FALLBACK_ROUTE;
 	}

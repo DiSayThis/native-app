@@ -1,8 +1,7 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Star } from 'lucide-react-native';
 import Animated, {
@@ -18,17 +17,10 @@ import Animated, {
 import { usePartnerFavoriteToggle } from '@/features/favorites/hook/usePartnerFavoriteToggle';
 
 import type { IPartnerCard } from '@/entities/partner/model/partner.dto';
+import { PartnerImage } from '@/entities/partner/ui/PartnerImage';
 
 import { type AppTheme } from '@/shared/styles/tokens';
 import { useTheme } from '@/shared/ui/theme/ThemeProvider';
-
-import {
-	buildPartnerImageUri,
-	isPartnerImageReady,
-	markPartnerImageReady,
-} from './partner-image-cache';
-
-const PARTNER_IMAGE_PLACEHOLDER = require('../../../shared/assets/placeholder.jpg');
 
 type PartnerCardProps = {
 	item: IPartnerCard;
@@ -41,9 +33,6 @@ const ENTER_STAGGER_MAX_DELAY = 280;
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCardProps) {
-	const imageUri = useMemo(() => buildPartnerImageUri(item.id), [item.id]);
-	const [isImageLoading, setIsImageLoading] = useState(() => !isPartnerImageReady(imageUri));
-	const [hasImageError, setHasImageError] = useState(false);
 	const { theme } = useTheme();
 	const styles = useMemo(() => createStyles(theme), [theme]);
 	const starScale = useSharedValue(1);
@@ -82,11 +71,6 @@ export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCar
 		[],
 	);
 
-	useEffect(() => {
-		setHasImageError(false);
-		setIsImageLoading(!isPartnerImageReady(imageUri));
-	}, [imageUri]);
-
 	return (
 		<AnimatedPressable
 			entering={enteringAnimation}
@@ -114,32 +98,7 @@ export const PartnerCard = memo(function PartnerCard({ item, index }: PartnerCar
 				</Pressable>
 			) : null}
 			<View style={styles.imageContainer}>
-				<Image
-					source={hasImageError ? PARTNER_IMAGE_PLACEHOLDER : { uri: imageUri }}
-					placeholder={!isPartnerImageReady(imageUri) ? PARTNER_IMAGE_PLACEHOLDER : undefined}
-					style={styles.cardImage}
-					contentFit="cover"
-					placeholderContentFit="cover"
-					cachePolicy="memory-disk"
-					transition={hasImageError || isPartnerImageReady(imageUri) ? 0 : 120}
-					onLoadStart={() => {
-						if (!isPartnerImageReady(imageUri)) {
-							setIsImageLoading(true);
-						}
-						setHasImageError(false);
-					}}
-					onLoad={() => {
-						markPartnerImageReady(imageUri);
-						setIsImageLoading(false);
-					}}
-					onError={() => {
-						setHasImageError(true);
-						setIsImageLoading(false);
-					}}
-				/>
-				{isImageLoading && !hasImageError && !isPartnerImageReady(imageUri) ? (
-					<View style={styles.loadingOverlay} />
-				) : null}
+				<PartnerImage partnerId={item.id} style={styles.cardImage} />
 			</View>
 			<View style={styles.cardInfoRow}>
 				<View style={styles.cardContent}>
@@ -194,11 +153,7 @@ const createStyles = (theme: AppTheme) =>
 		},
 		cardImage: {
 			...StyleSheet.absoluteFillObject,
-			backgroundColor: theme.colors.borderColor,
-		},
-		loadingOverlay: {
-			...StyleSheet.absoluteFillObject,
-			backgroundColor: 'transparent',
+			backgroundColor: theme.colors.imageBackground,
 		},
 		cardInfoRow: {
 			paddingTop: 8,
